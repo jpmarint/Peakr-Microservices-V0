@@ -28,9 +28,9 @@ namespace SolicitudesAPI.Controllers
 
             context.Entry(request).Reference(x => x.Adress).Load();
 
-            var company = new Company();
+            //var company = new Company();
 
-            context.Entry(company).Collection(x => x.Requests).Load();
+            //context.Entry(company).Collection(x => x.Requests).Load();
 
             return mapper.Map<RequestDetailDTO>(request);                                    
         }
