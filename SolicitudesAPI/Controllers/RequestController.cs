@@ -19,7 +19,7 @@ namespace SolicitudesAPI.Controllers
             this.mapper = mapper;
         }
 
-        [HttpGet("earrings")]
+        [HttpGet("pending")]
         public async Task<ActionResult<List<RequestDTO>>> GetPendientes(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
