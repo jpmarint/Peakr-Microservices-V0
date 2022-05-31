@@ -11,7 +11,7 @@ namespace SolicitudesAPI.Utilidades
         {
             
             CreateMap<Quote, QuoteDTO2>().ReverseMap();
-            CreateMap<Request, RequestDTO2>()
+            CreateMap<Request, RequestModalDTO>()
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
                 .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department))
                 .ForMember(x => x.Line2, x => x.MapFrom(y => y.Address.Line2))

@@ -79,7 +79,7 @@ namespace SolicitudesAPI.Controllers
         }
 
         [HttpGet("GetRequestCreationQuote")]
-        public async Task<ActionResult<RequestDTO2>> Get(int requestId)
+        public async Task<ActionResult<RequestModalDTO>> Get(int requestId)
         {
             var request = await context.Requests               
                 .Where(x => x.RequestId == requestId).FirstOrDefaultAsync();
@@ -89,7 +89,7 @@ namespace SolicitudesAPI.Controllers
             context.Entry(request).Reference(x => x.Companies).Load();
 
             //return Ok(quoteRequest);
-            return mapper.Map<RequestDTO2>(request);
+            return mapper.Map<RequestModalDTO>(request);
         }
 
     }

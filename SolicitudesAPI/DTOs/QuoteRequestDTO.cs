@@ -8,7 +8,7 @@ namespace SolicitudesAPI.DTOs
         public int QuoteId { get; set; }
         public int RequestId { get; set; }        
         public QuoteDTO2 Quote { get; set; }
-        public RequestDTO2 Request { get; set; }
+        public RequestModalDTO Request { get; set; }
         //public RequestDTO Request { get; set; }
 
         //public int RequestId { get; set; }
