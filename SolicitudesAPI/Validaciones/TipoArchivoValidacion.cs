@@ -13,9 +13,9 @@ namespace SolicitudesAPI.Validaciones
 
         public TipoArchivoValidacion(GrupoTipoArchivo grupoTipoArchivo)
         {
-            if (grupoTipoArchivo == GrupoTipoArchivo.Imagen)
+            if (grupoTipoArchivo == GrupoTipoArchivo.File)
             {
-                tiposValidos = new string[] { "image/jpg", "image/png", "image/gif" };
+                tiposValidos = new string[] { "application/pdf" };
             }
         }
 
