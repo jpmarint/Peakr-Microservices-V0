@@ -1,28 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SolicitudesAPI.Models
 {
-    public partial class Request
+    public class Request
     {
-        public Request()
-        {
-            Quotes = new HashSet<Quote>();
-        }
 
+        [Key]
+        [Required]
         public int RequestId { get; set; }
-        public string ProductName { get; set; }
-        public DateTime? RequestDate { get; set; }
-        public int? Quantity { get; set; }
-        public string RequestStatus { get; set; }
-        public int? CompanyId { get; set; }
-        public string PaymentConditions { get; set; }
+        [Required]
         public string QuerySearch { get; set; }
-        public int? AdressId { get; set; }
-        public string RequestNotes { get; set; }
 
-        public virtual Adress Adress { get; set; }
-        public virtual Company Company { get; set; }
-        public virtual ICollection<Quote> Quotes { get; set; }
+        public string? SKU { get; set; }
+
+        public bool IsExactProduct { get; set; }
+
+        [Required]
+        public DateTime RequestDate { get; set; }
+
+        [Required]
+        public string PaymentConditions { get; set; }
+
+
+        [Required]
+        public int Quantity { get; set; }
+
+        [Required]
+        public string ProductNeeds { get; set; }
+
+        public int? ChosenQuote { get; set; }
+
+        public string deliveryInstructions { get; set; }
+
+        public int CompanyId { get; set; }
+
+        public virtual Company Companies { get; set; }
+
+        public string StatusRequest { get; set; }
+
+        public int AddressId { get; set; }
+        public Address? Address { get; set; }
+
+        public List<QuoteRequest> QuoteRequest { get; set; }
     }
 }

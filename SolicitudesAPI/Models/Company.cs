@@ -1,22 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace SolicitudesAPI.Models
 {
-    public partial class Company
+    public class Company
     {
-        public Company()
-        {
-            Requests = new HashSet<Request>();
-        }
 
         public int CompanyId { get; set; }
-        public string CompanyName { get; set; }
-        public string LogoPath { get; set; }
-        public string WebSiteUrl { get; set; }
-        public int? Nit { get; set; }
-        public string CompanyDescription { get; set; }
+        public string? ImagePath { get; set; } = "../img/BannerTemp.png";
+        public string? LogoPath { get; set; } = "../img/LogoTemp.png";
 
-        public virtual ICollection<Request> Requests { get; set; }
+        [Required(ErrorMessage = "El nombre de la empresa es requerido")]
+        public string? Name { get; set; }
+
+        [Required(ErrorMessage = "El correo es requerido")]
+        public string? Email { get; set; }
+        public string? Description { get; set; }
+        public DateTime? EstablishedSince { get; set; }
+        [Required(ErrorMessage = "El NIT es requerido")]
+        public string? NIT { get; set; }
+        public string? WebSiteUrl { get; set; }
+        public string? TotalEmployees { get; set; }
+        public string? YearlySalesVolume { get; set; }
+
+        //Docs
+        public string? LegalExistenceDocPath { get; set; }
+        public string? BankAccountDocPath { get; set; }
+        public string? RutDocPath { get; set; }
+        public string? PeakrContractDocPath { get; set; }
+        public int AddressId { get; set; }
+        public Address? Address { get; set; }
+        public List<Request> requests { get; set; }
+        public List<Quote> Quotes { get; set; }
+
     }
 }

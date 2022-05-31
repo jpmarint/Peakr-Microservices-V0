@@ -1,17 +1,39 @@
-﻿namespace SolicitudesAPI.DTOs
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SolicitudesAPI.DTOs
 {
     public class RequestCreationDTO
     {
 
-        public string ProductName { get; set; }
-        public DateTime? RequestDate { get; set; }
-        public int? Quantity { get; set; }
-        public string RequestStatus { get; set; }
-        public int? CompanyId { get; set; }
-        public string PaymentConditions { get; set; }
         public string QuerySearch { get; set; }
-        public int? AdressId { get; set; }
-   
+
+        public string? SKU { get; set; }
+
+        public bool IsExactProduct { get; set; }
+
+        [Required]
+        public DateTime RequestDate { get; set; }
+
+        [Required]
+        public string PaymentConditions { get; set; }
+
+
+        [Required]
+        public int Quantity { get; set; }
+
+        [Required]
+        public string ProductNeeds { get; set; }
+
+        public int? ChosenQuote { get; set; }
+
+        public string deliveryInstructions { get; set; }
+        [Required]
+        public int CompanyId { get; set; }
+        [Required]
+        public string StatusRequest { get; set; }
+        [Required]
+        public int AddressId { get; set; }
+
 
     }
 }
