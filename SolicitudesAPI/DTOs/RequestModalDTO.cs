@@ -1,6 +1,6 @@
 ﻿namespace SolicitudesAPI.DTOs
 {
-    public class RequestDTO2
+    public class RequestModalDTO
     {
 
         public string QuerySearch { get; set; }
