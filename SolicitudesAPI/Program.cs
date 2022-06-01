@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using SolicitudesAPI;
+using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 

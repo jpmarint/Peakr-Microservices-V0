@@ -1,0 +1,26 @@
+{
+  "dependencies": {
+    "apis1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/SolicitudesAPIapi/apis/SolicitudesAPI",
+      "type": "apis.azure"
+    },
+    "mssql1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/solicitudesapidbserver/databases/SolicitudesAPI_db",
+      "type": "mssql.azure",
+      "connectionId": "defaultConnection"
+    },
+    "appInsights1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/microsoft.insights/components/SolicitudesAPI",
+      "type": "appInsights.azure",
+      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    },
+    "storage1": {
+      "secretStore": "AzureAppSettings",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/peakrweb",
+      "type": "storage.azure",
+      "connectionId": "DefaultEndpointsProtocol=https;AccountName=peakrweb;AccountKey=LRUVdyHVjEsQrXrtUJ8nWehAsNAg9wC1d3KPbY3Sm/Mb+e21Ju65LmklRNqtIGD/a1XF27JyrAO6+AStaFfX6w==;EndpointSuffix=core.windows.net"
+    }
+  }
+}

@@ -7,7 +7,7 @@ using SolicitudesAPI.Models;
 namespace SolicitudesAPI.Controllers
 {
     [ApiController]
-    [Route("api/company/requests")]
+    [Route("api/company/request")]
     public class RequestController : ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -19,25 +19,12 @@ namespace SolicitudesAPI.Controllers
             this.mapper = mapper;
         }
 
-        //[HttpGet("Request")]
-        //public async Task<ActionResult<RequestDetailDTO>> Get(int quoteId)
-        //{
-
-        //    var existe = await context.Quotes.AnyAsync(x => x.QuoteId == quoteId);
-
-        //    if (!existe)
-        //    {
-        //        return NotFound("No existe esa quote");
-        //    }
-
-        //    var quote = await context.Quotes.Include(quotesDB => quotesDB.QuoteRequests)
-        //        .ThenInclude(requestQuoteDB => requestQuoteDB.Request).ThenInclude(x => x.QuoteRequest)
-        //        .FirstOrDefaultAsync(x => x.QuoteId == quoteId);
-
-        //    return mapper.Map<RequestDetailDTO>(quote);
-        //}
-
-        [HttpPost]
+        /// <summary>
+        /// Register a new request
+        /// </summary>
+        /// <param name="requestCreationDTO"></param>
+        /// <returns></returns>
+        [HttpPost("NewRequest",Name = "NewRequest")]
         public async Task<IActionResult> Post(RequestCreationDTO requestCreationDTO)
         {          
 
@@ -48,7 +35,12 @@ namespace SolicitudesAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("RequestDetail")]
+        /// <summary>
+        /// Request Details as seller
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+        [HttpGet("RequestDetail", Name = "RequestDetailasSeller")]
         public async Task<ActionResult<RequestDetailDTO>> GetDetail(int requestId)
         {
 
@@ -68,7 +60,12 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<RequestDetailDTO>(request);
         }
 
-        [HttpGet("pending")]
+        /// <summary>
+        /// pending requests without quote
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        [HttpGet("Pending", Name = "RequestAsSeller/Pending")]
         public async Task<ActionResult<List<RequestDTO>>> GetPendientes(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
@@ -87,7 +84,12 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<List<RequestDTO>>(request);
         }
 
-        [HttpGet("sold")]
+        /// <summary>
+        /// requests approved and purchase order placed
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// <returns></returns>
+        [HttpGet("Sold", Name = "RequestAsSeller/Sold")]
         public async Task<ActionResult<List<RequestDTO>>> GetVendidas(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);

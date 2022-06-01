@@ -21,23 +21,13 @@ namespace SolicitudesAPI.Controllers
             this.mapper = mapper;
             this.almacenadorArchivos = almacenadorArchivos;
         }
-
-        //[HttpGet("{id:int}")]
-        //public async Task<ActionResult<CompanyDTO>> Get(int id)
-        //{
-        //    var existe = await context.Companies.AnyAsync(x => x.CompanyId == id);
-
-        //    if (!existe)
-        //    {
-        //        return NotFound("La compañia no existe en el sistema");
-        //    }
-
-        //    var company = await context.Companies
-        //        .Include(companyBD => companyBD.requests).FirstOrDefaultAsync(x => x.CompanyId == id);
-        //    return mapper.Map<CompanyDTO>(company);
-        //}
-
-        [HttpPost]
+      
+        /// <summary>
+        /// Register Company
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "RegisterCompany")]
         public async Task<IActionResult> Post([FromForm] CompanyCreationDTO companyCreationDTO)
         {
 

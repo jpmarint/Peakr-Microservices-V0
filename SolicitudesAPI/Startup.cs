@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using SolicitudesAPI.Helpers;
 using SolicitudesAPI.Models;
 using SolicitudesAPI.Servicios;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace SolicitudesAPI
@@ -23,7 +26,13 @@ namespace SolicitudesAPI
             x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                var archivoXML = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var rutaXML = Path.Combine(AppContext.BaseDirectory, archivoXML);
+                c.IncludeXmlComments(rutaXML);
+            });
+           
 
           
                 //Add a bunch of service configurations here
@@ -63,6 +72,14 @@ namespace SolicitudesAPI
                     builder.WithOrigins("").AllowAnyMethod().AllowAnyHeader();
                 });
             });
+
+
+
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(FiltroErrores));
+            });
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -70,10 +87,11 @@ namespace SolicitudesAPI
 
             if (env.IsDevelopment())
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
+               
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI();
             app.UseHttpsRedirection();
             app.UseRouting();
 

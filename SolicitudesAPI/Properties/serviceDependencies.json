@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "apis1": {
+      "type": "apis"
+    },
+    "appInsights1": {
+      "type": "appInsights",
+      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    },
+    "secrets1": {
+      "type": "secrets"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "defaultConnection"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "DefaultEndpointsProtocol=https;AccountName=peakrweb;AccountKey=LRUVdyHVjEsQrXrtUJ8nWehAsNAg9wC1d3KPbY3Sm/Mb+e21Ju65LmklRNqtIGD/a1XF27JyrAO6+AStaFfX6w==;EndpointSuffix=core.windows.net"
+    }
+  }
+}

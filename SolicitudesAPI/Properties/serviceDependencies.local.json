@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "appInsights1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/microsoft.insights/components/SolicitudesAPI",
+      "type": "appInsights.azure",
+      "connectionId": "APPLICATIONINSIGHTS_CONNECTION_STRING"
+    },
+    "secrets1": {
+      "type": "secrets.user"
+    },
+    "storage1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/peakrweb",
+      "type": "storage.azure",
+      "connectionId": "DefaultEndpointsProtocol=https;AccountName=peakrweb;AccountKey=LRUVdyHVjEsQrXrtUJ8nWehAsNAg9wC1d3KPbY3Sm/Mb+e21Ju65LmklRNqtIGD/a1XF27JyrAO6+AStaFfX6w==;EndpointSuffix=core.windows.net"
+    },
+    "mssql1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/solicitudesapidbserver/databases/SolicitudesAPI_db",
+      "type": "mssql.azure",
+      "connectionId": "defaultConnection"
+    }
+  }
+}

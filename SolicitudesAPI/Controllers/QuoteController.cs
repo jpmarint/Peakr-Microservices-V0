@@ -19,10 +19,13 @@ namespace SolicitudesAPI.Controllers
             this.context = context;
             this.mapper = mapper;
         }
-
-        
-
-            [HttpGet]
+        /// <summary>
+        /// Quote details
+        /// </summary>
+        /// <param name="quoteId"></param>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+        [HttpGet("QuoteDetails", Name = "Request&QuoteReadSellerModal")]
             public async Task<ActionResult<QuoteRequestDTO>> Get(int quoteId, int requestId)
         {
             var quoteRequest = await context.QuoteRequest.Include(request => request.Quote)
@@ -35,27 +38,17 @@ namespace SolicitudesAPI.Controllers
             context.Entry(city).Reference(x => x.Address).Load();
             context.Entry(city).Reference(x => x.Companies).Load();
 
-            //return Ok(quoteRequest);
+            
             return mapper.Map<QuoteRequestDTO>(quoteRequest);
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<RequestDetailDTO>> Get(int id)
-        //{
-
-        //    var request = await context.Requests.Include(requestBD => requestBD.Quotes)
-        //        .FirstOrDefaultAsync(x => x.RequestId == id);
-
-        //    context.Entry(request).Reference(x => x.Adress).Load();
-
-        //    var company = new Company();
-
-        //    context.Entry(company).Collection(x => x.Requests).Load();
-
-        //    return mapper.Map<RequestDetailDTO>(request);
-        //}
-
-        [HttpPost]
+       
+        /// <summary>
+        /// Register a new Quote
+        /// </summary>
+        /// <param name="quoteCreationDTO"></param>
+        /// <returns></returns>
+        [HttpPost("NewQuote", Name = "QuoteCreationModal")]
         public async Task<IActionResult> Post(QuoteCreationDTO quoteCreationDTO)
         {
             if (quoteCreationDTO.RequestId == null)
@@ -78,7 +71,12 @@ namespace SolicitudesAPI.Controllers
             return Ok();
         }
 
-        [HttpGet("GetRequestCreationQuote")]
+        /// <summary>
+        /// Request information to create a new quote
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+        [HttpGet("requestNewQuote", Name = "GetRequestCreationQuote")]
         public async Task<ActionResult<RequestModalDTO>> Get(int requestId)
         {
             var request = await context.Requests               
@@ -88,7 +86,7 @@ namespace SolicitudesAPI.Controllers
             context.Entry(request).Reference(x => x.Address).Load();
             context.Entry(request).Reference(x => x.Companies).Load();
 
-            //return Ok(quoteRequest);
+           
             return mapper.Map<RequestModalDTO>(request);
         }
 
