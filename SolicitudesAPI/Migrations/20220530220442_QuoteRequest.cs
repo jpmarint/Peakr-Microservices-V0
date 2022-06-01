@@ -8,8 +8,8 @@ namespace SolicitudesAPI.Migrations
     public partial class QuoteRequest : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
-        {        
-          
+        {
+
             migrationBuilder.CreateTable(
                 name: "Quotes",
                 columns: table => new
@@ -100,7 +100,7 @@ namespace SolicitudesAPI.Migrations
                         principalTable: "Requests",
                         principalColumn: "RequestId",
                         onDelete: ReferentialAction.Cascade);
-                });          
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_QuoteRequest_RequestId",
