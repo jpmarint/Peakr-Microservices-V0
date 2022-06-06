@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
@@ -7,6 +8,7 @@ using System.Linq;
 
 namespace SolicitudesAPI.Controllers
 {
+  
     [ApiController]
     [Route("api/quotes")]
     public class QuoteController : ControllerBase
@@ -25,9 +27,29 @@ namespace SolicitudesAPI.Controllers
         /// <param name="quoteId"></param>
         /// <param name="requestId"></param>
         /// <returns></returns>
+        /// 
+       
         [HttpGet("QuoteDetails", Name = "Request&QuoteReadSellerModal")]
             public async Task<ActionResult<QuoteRequestDTO>> Get(int quoteId, int requestId)
         {
+
+
+            var requestnoexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
+
+            if (!requestnoexiste)
+            {
+                return NotFound("No existe esa solicitud");
+            }
+
+
+            var quotenoexiste = await context.Quotes.AnyAsync(x => x.QuoteId == quoteId);
+
+            if (!quotenoexiste)
+            {
+                return NotFound("No existe esa cotización");
+            }
+
+
             var quoteRequest = await context.QuoteRequest.Include(request => request.Quote)
                 .Include(quote => quote.Request)
                 .Where(q => q.QuoteId == quoteId && q.RequestId == requestId).FirstOrDefaultAsync();
@@ -42,12 +64,13 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<QuoteRequestDTO>(quoteRequest);
         }
 
-       
+
         /// <summary>
         /// Register a new Quote
         /// </summary>
         /// <param name="quoteCreationDTO"></param>
         /// <returns></returns>
+       
         [HttpPost("NewQuote", Name = "QuoteCreationModal")]
         public async Task<IActionResult> Post(QuoteCreationDTO quoteCreationDTO)
         {
@@ -68,7 +91,7 @@ namespace SolicitudesAPI.Controllers
             var quote = mapper.Map<Quote>(quoteCreationDTO);
             context.Add(quote);
             await context.SaveChangesAsync();
-            return Ok();
+            return Ok(quote);
         }
 
         /// <summary>
@@ -76,9 +99,18 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="requestId"></param>
         /// <returns></returns>
+     
         [HttpGet("requestNewQuote", Name = "GetRequestCreationQuote")]
         public async Task<ActionResult<RequestModalDTO>> Get(int requestId)
         {
+
+            var requestnoexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
+
+            if (!requestnoexiste)
+            {
+                return NotFound("No existe esa solicitud");
+            }
+
             var request = await context.Requests               
                 .Where(x => x.RequestId == requestId).FirstOrDefaultAsync();
 

@@ -24,7 +24,7 @@ namespace SolicitudesAPI.DTOs
         [Required]
         public string ProductNeeds { get; set; }
 
-        public int? ChosenQuote { get; set; }
+        //public int? ChosenQuote { get; set; }
 
         public string deliveryInstructions { get; set; }
         [Required]

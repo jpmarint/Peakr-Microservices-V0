@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
@@ -6,6 +7,7 @@ using SolicitudesAPI.Models;
 
 namespace SolicitudesAPI.Controllers
 {
+ 
     [ApiController]
     [Route("api/company/request")]
     public class RequestController : ControllerBase
@@ -24,6 +26,7 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="requestCreationDTO"></param>
         /// <returns></returns>
+       
         [HttpPost("NewRequest",Name = "NewRequest")]
         public async Task<IActionResult> Post(RequestCreationDTO requestCreationDTO)
         {          
@@ -32,7 +35,7 @@ namespace SolicitudesAPI.Controllers
             context.Add(request);
             await context.SaveChangesAsync();
             var dto = mapper.Map<RequestDTO>(request);
-            return Ok();
+            return Ok(request);
         }
 
         /// <summary>
@@ -40,13 +43,14 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="requestId"></param>
         /// <returns></returns>
+     
         [HttpGet("RequestDetail", Name = "RequestDetailasSeller")]
         public async Task<ActionResult<RequestDetailDTO>> GetDetail(int requestId)
         {
 
-            var existe = await context.Requests.AnyAsync(x => x.RequestId == requestId);
+            var noexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
 
-            if (!existe)
+            if (!noexiste)
             {
                 return NotFound("No existe esa solicitud");
             }
@@ -65,8 +69,9 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="companyId"></param>
         /// <returns></returns>
+    
         [HttpGet("Pending", Name = "RequestAsSeller/Pending")]
-        public async Task<ActionResult<List<RequestDTO>>> GetPendientes(int companyId)
+        public async Task<ActionResult<List<RequestDTO>>> GetPending(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
 
@@ -89,8 +94,9 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="companyId"></param>
         /// <returns></returns>
+ 
         [HttpGet("Sold", Name = "RequestAsSeller/Sold")]
-        public async Task<ActionResult<List<RequestDTO>>> GetVendidas(int companyId)
+        public async Task<ActionResult<List<RequestDTO>>> GetSold(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
 

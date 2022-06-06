@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SolicitudesAPI.Helpers;
@@ -12,13 +14,16 @@ namespace SolicitudesAPI
 {
     public class Startup
     {
+
+        private readonly string _MyCors = "MyCors";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
 
         }
         public IConfiguration Configuration { get; }
-
+      
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -33,6 +38,7 @@ namespace SolicitudesAPI
                 c.IncludeXmlComments(rutaXML);
             });
            
+
 
           
                 //Add a bunch of service configurations here
@@ -65,25 +71,36 @@ namespace SolicitudesAPI
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-            services.AddCors(opciones =>
-            {
-                opciones.AddDefaultPolicy(builder =>
-                {
-                    builder.WithOrigins("").AllowAnyMethod().AllowAnyHeader();
-                });
-            });
 
-
+            
 
             services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(FiltroErrores));
             });
 
-        }
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: _MyCors,
+                builder =>
+                 {
+                     //builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
+                     //.AllowAnyHeader()
+                     //.AllowAnyMethod();
+                     //{
+                     builder.WithOrigins("https://localhost:7218",
+                                          "http://localhost:4200",
+                                          "https://apirequest.io")
+                                                  .AllowAnyHeader()
+                                                   .AllowAnyMethod();
+                 });
+            });
 
+        }    
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
+ 
 
             if (env.IsDevelopment())
             {
@@ -93,9 +110,10 @@ namespace SolicitudesAPI
             app.UseSwagger();
             app.UseSwaggerUI();
             app.UseHttpsRedirection();
+           
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors(_MyCors);
 
             app.UseAuthorization();
 
