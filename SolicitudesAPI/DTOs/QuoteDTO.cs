@@ -8,7 +8,7 @@
         public int DeliveryDeadLineInDays { get; set; }
         public DateTime QuoteExpirationDate { get; set; }
         public decimal NetCost { get; set; }
-        public List<RequestDetailDTO> Requests { get; set; }
+        //public List<RequestDetailDTO> Requests { get; set; }
 
     }
 }

@@ -10,7 +10,9 @@ namespace SolicitudesAPI.DTOs
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
+        [Required]
         public string Nit { get; set; }
+        [Required]
         public string Name { get; set; }
         [Required]
         [PesoArchivoValidacion(PesoMaximoEnMegaBytes: 6)]
@@ -25,7 +27,7 @@ namespace SolicitudesAPI.DTOs
         [TipoArchivoValidacion(GrupoTipoArchivo.File)]
         public IFormFile RutDocPath { get; set; }
 
-        public int AddressId { get; set; }
+        //public int AddressId { get; set; }
 
 
     }
