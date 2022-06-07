@@ -25,15 +25,6 @@ namespace SolicitudesAPI
            //creo un nuevo objeto que representa la llave primaria de la tabla AutorLibro
            .HasKey(al => new { al.QuoteId, al.RequestId });          
 
-            modelBuilder.Entity<CompanyCategory>()
-
-            .HasKey(al => new { al.CompanyId, al.CategoryId });
-
-            modelBuilder.Entity<RequestCategory>()
-
-            .HasKey(al => new { al.RequestId, al.CategoryId });
-
-
         }
 
 

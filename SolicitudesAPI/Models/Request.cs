@@ -38,6 +38,10 @@ namespace SolicitudesAPI.Models
 
         public string StatusRequest { get; set; }
 
+        public string? FilePath { get; set; } = string.Empty;
+
+        public string? FileName { get; set; }
+
         public int AddressId { get; set; }
         public Address? Address { get; set; }
 

@@ -70,7 +70,7 @@ namespace SolicitudesAPI.Controllers
                     var contenido = memoryStream.ToArray();
                     var extension = Path.GetExtension(companyCreationDTO.LegalExistenceDocPath.FileName);
                     var companyName = companyCreationDTO.Name;
-                    company.LegalExistenceDocPath = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor,
+                    company.LegalExistenceDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
                     companyCreationDTO.LegalExistenceDocPath.ContentType, companyName, LegalExistenceFileName);
 
                 }
@@ -84,7 +84,7 @@ namespace SolicitudesAPI.Controllers
                     var contenido = memoryStream.ToArray();
                     var companyName = companyCreationDTO.Name;
                     var extension = Path.GetExtension(companyCreationDTO.BankAccountDocPath.FileName);
-                    company.BankAccountDocPath = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor,
+                    company.BankAccountDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
                     companyCreationDTO.BankAccountDocPath.ContentType, companyName, BankAccountFileName);
 
                 }
@@ -98,7 +98,7 @@ namespace SolicitudesAPI.Controllers
                     var contenido = memoryStream.ToArray();
                     var companyName = companyCreationDTO.Name;
                     var extension = Path.GetExtension(companyCreationDTO.RutDocPath.FileName);
-                    company.RutDocPath = await almacenadorArchivos.GuardarArchivo(contenido, extension, contenedor,
+                    company.RutDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
                     companyCreationDTO.RutDocPath.ContentType, companyName, RutFileName);
 
                 }
