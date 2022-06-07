@@ -32,25 +32,39 @@ namespace SolicitudesAPI.Servicios
             string contenedor, string ruta, string contentType, string companyName, string fileName)
         {
             await BorrarArchivo(ruta, contenedor);
-            return await GuardarArchivo(contenido, extension, contenedor, contentType, companyName, fileName);
+            return await GuardarArchivoCompany(contenido, extension, contenedor, contentType, companyName, fileName);
         }
     
 
-        //Enviando imagen hacia Azure
-        public async Task<string> GuardarArchivo(byte[] contenido, string extension, string contenedor,
+        //Enviando archivos hacia Azure
+        public async Task<string> GuardarArchivoCompany(byte[] contenido, string extension, string contenedor,
             string contentType, string companyName, string fileName)
         {
             var cliente = new BlobContainerClient(connectionString, contenedor);
             await cliente.CreateIfNotExistsAsync();
             cliente.SetAccessPolicy(PublicAccessType.Blob);
-
             var archivoNombre = $"{companyName}/{fileName}{extension}";
             var blob = cliente.GetBlobClient(archivoNombre);
             var blobUploadOptions = new BlobUploadOptions();
             var blobHttpHeader = new BlobHttpHeaders();
             blobHttpHeader.ContentType = contentType;
             blobUploadOptions.HttpHeaders = blobHttpHeader;
+            await blob.UploadAsync(new BinaryData(contenido), blobUploadOptions);
+            return blob.Uri.ToString();
+        }
 
+        public async Task<string> GuardarArchivoRequest(byte[] contenido, string extension, string contenedor,
+            string contentType, string fileName)
+        {
+            var cliente = new BlobContainerClient(connectionString, contenedor);
+            await cliente.CreateIfNotExistsAsync();
+            cliente.SetAccessPolicy(PublicAccessType.Blob);
+            var archivoNombre = $"{Guid.NewGuid()}{ extension}";
+            var blob = cliente.GetBlobClient(archivoNombre);
+            var blobUploadOptions = new BlobUploadOptions();
+            var blobHttpHeader = new BlobHttpHeaders();
+            blobHttpHeader.ContentType = contentType;
+            blobUploadOptions.HttpHeaders = blobHttpHeader;
             await blob.UploadAsync(new BinaryData(contenido), blobUploadOptions);
             return blob.Uri.ToString();
         }

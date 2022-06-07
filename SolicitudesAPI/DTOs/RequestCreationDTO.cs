@@ -24,6 +24,10 @@ namespace SolicitudesAPI.DTOs
         [Required]
         public string ProductNeeds { get; set; }
 
+        public IFormFile FilePath { get; set; }
+
+        public string? FileName { get; set; }
+
         //public int? ChosenQuote { get; set; }
 
         public string deliveryInstructions { get; set; }

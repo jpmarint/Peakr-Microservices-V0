@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
 using SolicitudesAPI.Models;
+using SolicitudesAPI.Servicios;
 
 namespace SolicitudesAPI.Controllers
 {
@@ -14,13 +15,38 @@ namespace SolicitudesAPI.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        private string Search;
+        private readonly IAlmacenadorArchivos almacenadorArchivos;
+        private readonly string contenedor = "request";
 
-        public RequestController(ApplicationDbContext context, IMapper mapper)
+        public RequestController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
         {
             this.context = context;
             this.mapper = mapper;
+            this.almacenadorArchivos = almacenadorArchivos;
         }
+
+        [HttpGet("GetAddress")]
+        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
+        {
+
+            var address = await context.Address
+                .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
+
+            return mapper.Map<AddressDTO>(address);
+
+        }
+
+        //[HttpPost("NewRequest", Name = "NewRequest")]
+        //public async Task<IActionResult> NewRequest(string search)
+        //{
+        //    var resultado1 = search;    
+
+        //    return Ok(resultado1);
+
+        //}
+
+
+        
 
         /// <summary>
         /// Register a new request
@@ -28,18 +54,6 @@ namespace SolicitudesAPI.Controllers
         /// <param name="requestCreationDTO"></param>
         /// <returns></returns>
         /// 
-
-
-        //[HttpPost("NewRequest", Name = "NewRequest")]
-        //public async Task<IActionResult> NewRequest(string search)
-        //{
-        //    var resultado1 = search;
-
-        //    Search = resultado1;
-
-        //    return Ok(Search);
-
-        //}
 
         [HttpPost("PostRequest",Name = "PostRequest")]
         public async Task<IActionResult> Post(RequestCreationDTO requestCreationDTO)
@@ -58,6 +72,8 @@ namespace SolicitudesAPI.Controllers
             {
                 return BadRequest("No existe una de las categorias enviadas");
             }
+
+
 
             var request = mapper.Map<Request>(requestCreationDTO);
             context.Add(request);
@@ -90,15 +106,6 @@ namespace SolicitudesAPI.Controllers
             context.Entry(request).Reference(x => x.Address).Load();
 
             return mapper.Map<RequestDetailDTO>(request);
-        }
-
-        [HttpGet("GetAddress")]
-        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
-        {
-
-            var address = await context.Address.AnyAsync(x => x.AddressId == addressId);
-
-            return mapper.Map<AddressDTO>(address);
         }
 
         /// <summary>

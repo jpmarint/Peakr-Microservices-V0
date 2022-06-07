@@ -1,7 +1,11 @@
-﻿namespace SolicitudesAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SolicitudesAPI.Models
 {
     public class RequestCategory
     {
+        [Key]
+        public int Id { get; set; }
 
         public int RequestId { get; set; }
 
