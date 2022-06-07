@@ -15,6 +15,9 @@ namespace SolicitudesAPI.DTOs
         [Required]
         public string Name { get; set; }
         [Required]
+        [Range(0, 1)]
+        public int CompanyType { get; set; }
+        [Required]
         [PesoArchivoValidacion(PesoMaximoEnMegaBytes: 6)]
         [TipoArchivoValidacion(GrupoTipoArchivo.File)]
         public IFormFile LegalExistenceDocPath { get; set; }

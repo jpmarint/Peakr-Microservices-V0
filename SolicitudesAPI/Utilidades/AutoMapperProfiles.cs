@@ -9,7 +9,9 @@ namespace SolicitudesAPI.Utilidades
 
         public AutoMapperProfiles()
         {
-            
+
+            CreateMap<Address, AddressDTO>().ReverseMap();
+
             CreateMap<Quote, QuoteDTO2>().ReverseMap();
             CreateMap<Request, RequestModalDTO>()
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
@@ -20,7 +22,8 @@ namespace SolicitudesAPI.Utilidades
                 .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Companies.LogoPath))
                 .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Companies.WebSiteUrl));
 
-            CreateMap<RequestCreationDTO, Request>();
+            CreateMap<RequestCreationDTO, Request>()
+                .ForMember(request => request.requestCategories, opciones => opciones.MapFrom(MapRequestCategory));
 
             CreateMap<Quote, QuoteDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
@@ -43,6 +46,30 @@ namespace SolicitudesAPI.Utilidades
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
                 .ForMember(requestDetailDTO => requestDetailDTO.Quotes, opciones => opciones.MapFrom(MapRequestQuotesList));
         }
+
+        //metodos
+
+
+        //metodo para mapear requestcategory
+
+        private List<RequestCategory> MapRequestCategory(RequestCreationDTO requestCreationDTO, Request request)
+        {
+            var resultado = new List<RequestCategory>();
+
+            if (requestCreationDTO.CategoriesIds == null)
+            {
+                return resultado;
+            }
+
+            foreach (var categoryId in requestCreationDTO.CategoriesIds)
+            {
+                resultado.Add(new RequestCategory() { CategoryId = categoryId });
+            }
+
+            return resultado;
+        }
+
+
 
         private List<QuoteDTO> MapRequestQuotesList(Request request, RequestDetailDTO requestDetailDTO)
         {
@@ -71,13 +98,9 @@ namespace SolicitudesAPI.Utilidades
             if (quoteCreationDTO.RequestId == null)
             {
                 return result;
-            }
-
-            foreach (var requestId in quoteCreationDTO.RequestId)
-            {
-                result.Add(new QuoteRequest() { RequestId = requestId });
-            }
-
+            }         
+                result.Add(new QuoteRequest() { RequestId = quoteCreationDTO.RequestId });
+            
             return result;
         }
     }

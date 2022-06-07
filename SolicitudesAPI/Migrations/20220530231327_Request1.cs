@@ -9,11 +9,11 @@ namespace SolicitudesAPI.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
 
-            migrationBuilder.AddColumn<string>(
-                name: "deliveryInstructions",
-                table: "Requests",
-                type: "nvarchar(max)",
-                nullable: true);
+            //migrationBuilder.AddColumn<string>(
+            //    name: "deliveryInstructions",
+            //    table: "Requests",
+            //    type: "nvarchar(max)",
+            //    nullable: true);
 
 
         }

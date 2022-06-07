@@ -42,5 +42,7 @@ namespace SolicitudesAPI.Models
         public Address? Address { get; set; }
 
         public List<QuoteRequest> QuoteRequest { get; set; }
+
+        public List<RequestCategory> requestCategories { get; set; }
     }
 }

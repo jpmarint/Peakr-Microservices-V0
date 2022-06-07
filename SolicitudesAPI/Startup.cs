@@ -84,13 +84,8 @@ namespace SolicitudesAPI
                 options.AddPolicy(name: _MyCors,
                 builder =>
                  {
-                     //builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-                     //.AllowAnyHeader()
-                     //.AllowAnyMethod();
-                     //{
                      builder.WithOrigins("https://localhost:7218",
-                                          "http://localhost:4200",
-                                          "https://apirequest.io")
+                                          "http://localhost:4200")
                                                   .AllowAnyHeader()
                                                    .AllowAnyMethod();
                  });

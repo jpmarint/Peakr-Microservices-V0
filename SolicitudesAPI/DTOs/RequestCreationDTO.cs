@@ -34,6 +34,6 @@ namespace SolicitudesAPI.DTOs
         [Required]
         public int AddressId { get; set; }
 
-
+        public List<int> CategoriesIds { get; set; }
     }
 }

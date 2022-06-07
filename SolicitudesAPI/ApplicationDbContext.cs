@@ -19,11 +19,20 @@ namespace SolicitudesAPI
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
 
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<QuoteRequest>()
            //creo un nuevo objeto que representa la llave primaria de la tabla AutorLibro
-           .HasKey(al => new { al.QuoteId, al.RequestId });
+           .HasKey(al => new { al.QuoteId, al.RequestId });          
 
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<CompanyCategory>()
+
+            .HasKey(al => new { al.CompanyId, al.CategoryId });
+
+            modelBuilder.Entity<RequestCategory>()
+
+            .HasKey(al => new { al.RequestId, al.CategoryId });
+
 
         }
 
@@ -37,6 +46,12 @@ namespace SolicitudesAPI
         public DbSet<Quote> Quotes { get; set; }
 
         public DbSet<QuoteRequest> QuoteRequest { get; set; }
+
+        public DbSet<CompanyCategory> CompanyCategories { get; set; }
+
+        public DbSet<RequestCategory> RequestCategories { get; set; }
+
+        public DbSet<Category> Categories { get; set; }
 
     }
     

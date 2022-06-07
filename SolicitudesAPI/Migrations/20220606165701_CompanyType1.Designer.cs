@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SolicitudesAPI;
 
@@ -11,9 +12,10 @@ using SolicitudesAPI;
 namespace SolicitudesAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220606165701_CompanyType1")]
+    partial class CompanyType1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,30 +56,6 @@ namespace SolicitudesAPI.Migrations
                     b.ToTable("Address");
                 });
 
-            modelBuilder.Entity("SolicitudesAPI.Models.Category", b =>
-                {
-                    b.Property<int>("CategoryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"), 1L, 1);
-
-                    b.Property<int>("CategoryCode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CategoryId");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("SolicitudesAPI.Models.Company", b =>
                 {
                     b.Property<int>("CompanyId")
@@ -90,6 +68,9 @@ namespace SolicitudesAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("BankAccountDocPath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CompanyType")
@@ -142,21 +123,6 @@ namespace SolicitudesAPI.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Companies");
-                });
-
-            modelBuilder.Entity("SolicitudesAPI.Models.CompanyCategory", b =>
-                {
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CompanyId", "CategoryId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("CompanyCategories");
                 });
 
             modelBuilder.Entity("SolicitudesAPI.Models.Quote", b =>
@@ -303,21 +269,6 @@ namespace SolicitudesAPI.Migrations
                     b.ToTable("Requests");
                 });
 
-            modelBuilder.Entity("SolicitudesAPI.Models.RequestCategory", b =>
-                {
-                    b.Property<int>("RequestId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RequestId", "CategoryId");
-
-                    b.HasIndex("CategoryId");
-
-                    b.ToTable("RequestCategories");
-                });
-
             modelBuilder.Entity("SolicitudesAPI.Models.Company", b =>
                 {
                     b.HasOne("SolicitudesAPI.Models.Address", "Address")
@@ -326,25 +277,6 @@ namespace SolicitudesAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("SolicitudesAPI.Models.CompanyCategory", b =>
-                {
-                    b.HasOne("SolicitudesAPI.Models.Category", "Category")
-                        .WithMany("companyCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SolicitudesAPI.Models.Company", "Company")
-                        .WithMany("companyCategories")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("SolicitudesAPI.Models.Quote", b =>
@@ -396,25 +328,6 @@ namespace SolicitudesAPI.Migrations
                     b.Navigation("Companies");
                 });
 
-            modelBuilder.Entity("SolicitudesAPI.Models.RequestCategory", b =>
-                {
-                    b.HasOne("SolicitudesAPI.Models.Category", "Category")
-                        .WithMany("requestCategories")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("SolicitudesAPI.Models.Request", "Request")
-                        .WithMany("requestCategories")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Request");
-                });
-
             modelBuilder.Entity("SolicitudesAPI.Models.Address", b =>
                 {
                     b.Navigation("Companies");
@@ -422,18 +335,9 @@ namespace SolicitudesAPI.Migrations
                     b.Navigation("Requests");
                 });
 
-            modelBuilder.Entity("SolicitudesAPI.Models.Category", b =>
-                {
-                    b.Navigation("companyCategories");
-
-                    b.Navigation("requestCategories");
-                });
-
             modelBuilder.Entity("SolicitudesAPI.Models.Company", b =>
                 {
                     b.Navigation("Quotes");
-
-                    b.Navigation("companyCategories");
 
                     b.Navigation("requests");
                 });
@@ -446,8 +350,6 @@ namespace SolicitudesAPI.Migrations
             modelBuilder.Entity("SolicitudesAPI.Models.Request", b =>
                 {
                     b.Navigation("QuoteRequest");
-
-                    b.Navigation("requestCategories");
                 });
 #pragma warning restore 612, 618
         }

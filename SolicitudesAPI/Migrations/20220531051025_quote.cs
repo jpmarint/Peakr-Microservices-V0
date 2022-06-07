@@ -8,40 +8,40 @@ namespace SolicitudesAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "RequestId",
-                table: "Quotes",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+        //    migrationBuilder.AddColumn<int>(
+        //        name: "RequestId",
+        //        table: "Quotes",
+        //        type: "int",
+        //        nullable: false,
+        //        defaultValue: 0);
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Quotes_RequestId",
-                table: "Quotes",
-                column: "RequestId");
+        //    migrationBuilder.CreateIndex(
+        //        name: "IX_Quotes_RequestId",
+        //        table: "Quotes",
+        //        column: "RequestId");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Quotes_Requests_RequestId",
-                table: "Quotes",
-                column: "RequestId",
-                principalTable: "Requests",
-                principalColumn: "RequestId",
-                onDelete: ReferentialAction.Cascade);
-        }
+        //    migrationBuilder.AddForeignKey(
+        //        name: "FK_Quotes_Requests_RequestId",
+        //        table: "Quotes",
+        //        column: "RequestId",
+        //        principalTable: "Requests",
+        //        principalColumn: "RequestId",
+        //        onDelete: ReferentialAction.Cascade);
+        //}
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Quotes_Requests_RequestId",
-                table: "Quotes");
+        //protected override void Down(MigrationBuilder migrationBuilder)
+        //{
+        //    migrationBuilder.DropForeignKey(
+        //        name: "FK_Quotes_Requests_RequestId",
+        //        table: "Quotes");
 
-            migrationBuilder.DropIndex(
-                name: "IX_Quotes_RequestId",
-                table: "Quotes");
+        //    migrationBuilder.DropIndex(
+        //        name: "IX_Quotes_RequestId",
+        //        table: "Quotes");
 
-            migrationBuilder.DropColumn(
-                name: "RequestId",
-                table: "Quotes");
+        //    migrationBuilder.DropColumn(
+        //        name: "RequestId",
+        //        table: "Quotes");
         }
     }
 }

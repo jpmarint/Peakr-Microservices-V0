@@ -8,49 +8,49 @@ namespace SolicitudesAPI.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Quotes_Requests_RequestId",
-                table: "Quotes");
+        //    migrationBuilder.DropForeignKey(
+        //        name: "FK_Quotes_Requests_RequestId",
+        //        table: "Quotes");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "RequestId",
-                table: "Quotes",
-                type: "int",
-                nullable: true,
-                oldClrType: typeof(int),
-                oldType: "int");
+        //    migrationBuilder.AlterColumn<int>(
+        //        name: "RequestId",
+        //        table: "Quotes",
+        //        type: "int",
+        //        nullable: true,
+        //        oldClrType: typeof(int),
+        //        oldType: "int");
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Quotes_Requests_RequestId",
-                table: "Quotes",
-                column: "RequestId",
-                principalTable: "Requests",
-                principalColumn: "RequestId");
-        }
+        //    migrationBuilder.AddForeignKey(
+        //        name: "FK_Quotes_Requests_RequestId",
+        //        table: "Quotes",
+        //        column: "RequestId",
+        //        principalTable: "Requests",
+        //        principalColumn: "RequestId");
+        //}
 
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Quotes_Requests_RequestId",
-                table: "Quotes");
+        //protected override void Down(MigrationBuilder migrationBuilder)
+        //{
+        //    migrationBuilder.DropForeignKey(
+        //        name: "FK_Quotes_Requests_RequestId",
+        //        table: "Quotes");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "RequestId",
-                table: "Quotes",
-                type: "int",
-                nullable: false,
-                defaultValue: 0,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldNullable: true);
+        //    migrationBuilder.AlterColumn<int>(
+        //        name: "RequestId",
+        //        table: "Quotes",
+        //        type: "int",
+        //        nullable: false,
+        //        defaultValue: 0,
+        //        oldClrType: typeof(int),
+        //        oldType: "int",
+        //        oldNullable: true);
 
-            migrationBuilder.AddForeignKey(
-                name: "FK_Quotes_Requests_RequestId",
-                table: "Quotes",
-                column: "RequestId",
-                principalTable: "Requests",
-                principalColumn: "RequestId",
-                onDelete: ReferentialAction.Cascade);
+        //    migrationBuilder.AddForeignKey(
+        //        name: "FK_Quotes_Requests_RequestId",
+        //        table: "Quotes",
+        //        column: "RequestId",
+        //        principalTable: "Requests",
+        //        principalColumn: "RequestId",
+        //        onDelete: ReferentialAction.Cascade);
         }
     }
 }
