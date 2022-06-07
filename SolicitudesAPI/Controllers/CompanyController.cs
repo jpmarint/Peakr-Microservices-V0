@@ -9,7 +9,7 @@ using SolicitudesAPI.Servicios;
 namespace SolicitudesAPI.Controllers
 {
     [ApiController]
-    [Route("api/companies")]
+    [Route("Api/Companies")]
     public class CompanyController : ControllerBase
     {
         private readonly string RutFileName = "RUT";
@@ -32,7 +32,7 @@ namespace SolicitudesAPI.Controllers
         /// <param name="companyCreationDTO"></param>
         /// <returns></returns>
        
-        [HttpPost(Name = "RegisterCompany")]
+        [HttpPost("Register", Name = "RegisterCompany")]
         public async Task<IActionResult> Post([FromForm] CompanyCreationDTO companyCreationDTO)
         {
 

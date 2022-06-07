@@ -78,15 +78,9 @@ namespace SolicitudesAPI.Controllers
             {
                 return BadRequest("No se puede crear una cotizacion sin solicitud");
             }
-
             var requestId = await context.Requests
-                .Where(requestDB => quoteCreationDTO.RequestId
-                .Contains(requestDB.RequestId)).Select(x => x.RequestId).ToListAsync();
-
-            if (quoteCreationDTO.RequestId.Count != requestId.Count)
-            {
-                return BadRequest("No existe la solicitud enviada");
-            }
+                .Where(requestDB => requestDB.RequestId == quoteCreationDTO.RequestId)
+                .Select(x => x.RequestId).ToListAsync();
 
             var quote = mapper.Map<Quote>(quoteCreationDTO);
             context.Add(quote);

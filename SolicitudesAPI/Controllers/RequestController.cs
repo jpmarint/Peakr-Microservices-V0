@@ -14,6 +14,7 @@ namespace SolicitudesAPI.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private string Search;
 
         public RequestController(ApplicationDbContext context, IMapper mapper)
         {
@@ -26,10 +27,37 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="requestCreationDTO"></param>
         /// <returns></returns>
-       
-        [HttpPost("NewRequest",Name = "NewRequest")]
+        /// 
+
+
+        //[HttpPost("NewRequest", Name = "NewRequest")]
+        //public async Task<IActionResult> NewRequest(string search)
+        //{
+        //    var resultado1 = search;
+
+        //    Search = resultado1;
+
+        //    return Ok(Search);
+
+        //}
+
+        [HttpPost("PostRequest",Name = "PostRequest")]
         public async Task<IActionResult> Post(RequestCreationDTO requestCreationDTO)
-        {          
+        {
+
+            if (requestCreationDTO.CategoriesIds == null)
+            {
+                return BadRequest("No se puede crear una request sin categoría");
+            }
+
+            var categoryId = await context.Categories
+                .Where(categoryDB => requestCreationDTO.CategoriesIds.Contains(categoryDB.CategoryId))
+                .Select(x => x.CategoryId).ToListAsync();
+
+            if (requestCreationDTO.CategoriesIds.Count != categoryId.Count)
+            {
+                return BadRequest("No existe una de las categorias enviadas");
+            }
 
             var request = mapper.Map<Request>(requestCreationDTO);
             context.Add(request);
@@ -64,12 +92,21 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<RequestDetailDTO>(request);
         }
 
+        [HttpGet("GetAddress")]
+        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
+        {
+
+            var address = await context.Address.AnyAsync(x => x.AddressId == addressId);
+
+            return mapper.Map<AddressDTO>(address);
+        }
+
         /// <summary>
         /// pending requests without quote
         /// </summary>
         /// <param name="companyId"></param>
         /// <returns></returns>
-    
+
         [HttpGet("Pending", Name = "RequestAsSeller/Pending")]
         public async Task<ActionResult<List<RequestDTO>>> GetPending(int companyId)
         {

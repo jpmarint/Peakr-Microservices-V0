@@ -16,9 +16,7 @@
         public bool IsProductExactMatch { get; set; }
         public string NotesToClient { get; set; }
         public int CompanyId { get; set; }
-        public List<int> RequestId { get; set; }
-        
-
+        public int RequestId { get; set; }
 
     }
 }
