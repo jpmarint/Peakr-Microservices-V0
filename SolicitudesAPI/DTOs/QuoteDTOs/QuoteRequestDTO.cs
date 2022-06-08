@@ -1,12 +1,13 @@
-﻿using SolicitudesAPI.Models;
+﻿using SolicitudesAPI.DTOs.RequestDTOs;
+using SolicitudesAPI.Models;
 
-namespace SolicitudesAPI.DTOs
+namespace SolicitudesAPI.DTOs.QuoteDTOs
 {
     public class QuoteRequestDTO
     {
 
         public int QuoteId { get; set; }
-        public int RequestId { get; set; }        
+        public int RequestId { get; set; }
         public QuoteDTO2 Quote { get; set; }
         public RequestModalDTO Request { get; set; }
         //public RequestDTO Request { get; set; }

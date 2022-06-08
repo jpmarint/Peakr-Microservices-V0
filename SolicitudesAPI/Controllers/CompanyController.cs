@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
+using SolicitudesAPI.DTOs.CompanyDTOs;
 using SolicitudesAPI.Models;
 using SolicitudesAPI.Servicios;
 
@@ -33,7 +34,7 @@ namespace SolicitudesAPI.Controllers
         /// <returns></returns>
        
         [HttpPost("Register", Name = "RegisterCompany")]
-        public async Task<IActionResult> Post([FromForm] CompanyCreationDTO companyCreationDTO)
+        public async Task<IActionResult> RegisterCompany([FromForm] CompanyCreationDTO companyCreationDTO)
         {
 
             var ExisteCompanymismocorreo = await context.Companies.AnyAsync(x => x.Email == companyCreationDTO.Email);
@@ -110,6 +111,71 @@ namespace SolicitudesAPI.Controllers
 
         }
 
-       
+        [HttpGet("Details")]
+        public async Task<IActionResult> GetCompanyDetails(int companyId)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
+            
+            var companyDetails = mapper.Map<CompanyDetailsDTO>(company);
+
+            return Ok(companyDetails);
+        }
+
+        [HttpGet("Address")]
+        public async Task<IActionResult> GetCompanyAddress(int companyId)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var companyAddressId = await context.Companies
+                .Where(x => x.CompanyId == companyId)
+                .Select(u => u.AddressId)
+                .FirstOrDefaultAsync();
+
+            var address = await context.Address
+                .Where(addressDB => addressDB.AddressId == companyAddressId).FirstOrDefaultAsync();
+            return Ok(mapper.Map<AddressDTO>(address));
+        }
+
+        [HttpGet("Docs")]
+        public async Task<IActionResult> GetCompanyDocs(int companyId)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
+
+            var companyDocs = mapper.Map<CompanyDocsDTO>(company);
+
+            return Ok(companyDocs);
+        }
+
+        [HttpPost("UpdateDetails")]
+        public async Task<IActionResult> UpdateCompanyDetails(CompanyDetailsDTO companyDetails)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyDetails.CompanyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            
+            
+            return Ok("Los detalles de la compañía se actualizaron.");
+        }
+
+
     }
 }

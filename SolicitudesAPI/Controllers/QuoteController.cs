@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SolicitudesAPI.DTOs;
+using SolicitudesAPI.DTOs.QuoteDTOs;
+using SolicitudesAPI.DTOs.RequestDTOs;
 using SolicitudesAPI.Models;
 using System.Linq;
 
 namespace SolicitudesAPI.Controllers
 {
-  
+
     [ApiController]
     [Route("api/quotes")]
     public class QuoteController : ControllerBase

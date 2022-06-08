@@ -1,4 +1,4 @@
-﻿namespace SolicitudesAPI.DTOs
+﻿namespace SolicitudesAPI.DTOs.QuoteDTOs
 {
     public class QuoteDTO
     {

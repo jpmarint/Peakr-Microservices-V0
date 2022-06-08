@@ -1,4 +1,6 @@
-﻿namespace SolicitudesAPI.DTOs
+﻿using SolicitudesAPI.DTOs.QuoteDTOs;
+
+namespace SolicitudesAPI.DTOs.RequestDTOs
 {
     public class RequestDetailDTO
     {

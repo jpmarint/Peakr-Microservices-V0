@@ -30,6 +30,8 @@ namespace SolicitudesAPI.Models
         public string? BankAccountDocPath { get; set; }
         public string? RutDocPath { get; set; }
         public string? PeakrContractDocPath { get; set; }
+
+        //External
         public int? AddressId { get; set; }
         public Address? Address { get; set; }
         public List<Request> requests { get; set; }
