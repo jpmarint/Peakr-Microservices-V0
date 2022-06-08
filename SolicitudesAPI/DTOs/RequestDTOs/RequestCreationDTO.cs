@@ -1,13 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SolicitudesAPI.DTOs
+namespace SolicitudesAPI.DTOs.RequestDTOs
 {
     public class RequestCreationDTO
     {
 
         public string QuerySearch { get; set; }
 
-        public string? SKU { get; set; }
+        public string SKU { get; set; }
 
         public bool IsExactProduct { get; set; }
 
@@ -26,7 +26,7 @@ namespace SolicitudesAPI.DTOs
 
         public IFormFile FilePath { get; set; }
 
-        public string? FileName { get; set; }
+        public string FileName { get; set; }
 
         //public int? ChosenQuote { get; set; }
 

@@ -1,4 +1,4 @@
-﻿namespace SolicitudesAPI.DTOs
+﻿namespace SolicitudesAPI.DTOs.RequestDTOs
 {
     public class RequestModalDTO
     {

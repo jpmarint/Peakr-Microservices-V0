@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
+using SolicitudesAPI.DTOs.RequestDTOs;
 using SolicitudesAPI.Models;
 using SolicitudesAPI.Servicios;
 
 namespace SolicitudesAPI.Controllers
 {
- 
+
     [ApiController]
     [Route("api/company/request")]
     public class RequestController : ControllerBase
@@ -45,13 +46,10 @@ namespace SolicitudesAPI.Controllers
 
         //}
 
-
-        
-
         /// <summary>
         /// Register a new request
         /// </summary>
-        /// <param name="requestCreationDTO"></param>
+        // <param name="requestCreationDTO"></param>
         /// <returns></returns>
         /// 
 
@@ -85,7 +83,7 @@ namespace SolicitudesAPI.Controllers
         /// <summary>
         /// Request Details as seller
         /// </summary>
-        /// <param name="requestId"></param>
+        // <param name="requestId"></param>
         /// <returns></returns>
      
         [HttpGet("RequestDetail", Name = "RequestDetailasSeller")]
@@ -111,7 +109,7 @@ namespace SolicitudesAPI.Controllers
         /// <summary>
         /// pending requests without quote
         /// </summary>
-        /// <param name="companyId"></param>
+        // <param name="companyId"></param>
         /// <returns></returns>
 
         [HttpGet("Pending", Name = "RequestAsSeller/Pending")]
@@ -136,7 +134,7 @@ namespace SolicitudesAPI.Controllers
         /// <summary>
         /// requests approved and purchase order placed
         /// </summary>
-        /// <param name="companyId"></param>
+        // <param name="companyId"></param>
         /// <returns></returns>
  
         [HttpGet("Sold", Name = "RequestAsSeller/Sold")]

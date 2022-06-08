@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using SolicitudesAPI.DTOs;
+using SolicitudesAPI.DTOs.CompanyDTOs;
+using SolicitudesAPI.DTOs.QuoteDTOs;
+using SolicitudesAPI.DTOs.RequestDTOs;
 using SolicitudesAPI.Models;
 
 namespace SolicitudesAPI.Utilidades
@@ -26,6 +29,9 @@ namespace SolicitudesAPI.Utilidades
                 .ForMember(request => request.requestCategories, opciones => opciones.MapFrom(MapRequestCategory));
 
             CreateMap<Quote, QuoteDTO>().ReverseMap();
+            CreateMap<Company, CompanyDTO>().ReverseMap();
+            CreateMap<Company, CompanyDetailsDTO>().ReverseMap();
+            CreateMap<Company, CompanyDocsDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
             CreateMap<CompanyCreationDTO, Company>()
                 .ForMember(x => x.LegalExistenceDocPath, options => options.Ignore())

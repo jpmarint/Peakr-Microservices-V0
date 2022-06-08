@@ -1,7 +1,7 @@
 ﻿using SolicitudesAPI.Validaciones;
 using System.ComponentModel.DataAnnotations;
 
-namespace SolicitudesAPI.DTOs
+namespace SolicitudesAPI.DTOs.CompanyDTOs
 {
     public class CompanyCreationDTO
     {
