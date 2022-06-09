@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
@@ -32,7 +31,7 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="companyCreationDTO"></param>
         /// <returns></returns>
-       
+
         [HttpPost("Register", Name = "RegisterCompany")]
         public async Task<IActionResult> RegisterCompany([FromForm] CompanyCreationDTO companyCreationDTO)
         {
@@ -63,44 +62,43 @@ namespace SolicitudesAPI.Controllers
 
             var company = mapper.Map<Company>(companyCreationDTO);
 
-            if (companyCreationDTO.LegalExistenceDocPath != null)
+            if (companyCreationDTO.LegalExistenceDoc != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await companyCreationDTO.LegalExistenceDocPath.CopyToAsync(memoryStream);
+                    await companyCreationDTO.LegalExistenceDoc.CopyToAsync(memoryStream);
                     var contenido = memoryStream.ToArray();
-                    var extension = Path.GetExtension(companyCreationDTO.LegalExistenceDocPath.FileName);
+                    var extension = Path.GetExtension(companyCreationDTO.LegalExistenceDoc.FileName);
                     var companyName = companyCreationDTO.Name;
-                    company.LegalExistenceDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
-                    companyCreationDTO.LegalExistenceDocPath.ContentType, companyName, LegalExistenceFileName);
+                    company.LegalExistenceDocPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, LegalExistenceFileName, companyCreationDTO.LegalExistenceDoc);
 
                 }
             }
 
-            if (companyCreationDTO.BankAccountDocPath != null)
+            if (companyCreationDTO.BankAccountDoc != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await companyCreationDTO.BankAccountDocPath.CopyToAsync(memoryStream);
+                    await companyCreationDTO.BankAccountDoc.CopyToAsync(memoryStream);
                     var contenido = memoryStream.ToArray();
                     var companyName = companyCreationDTO.Name;
-                    var extension = Path.GetExtension(companyCreationDTO.BankAccountDocPath.FileName);
-                    company.BankAccountDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
-                    companyCreationDTO.BankAccountDocPath.ContentType, companyName, BankAccountFileName);
+                    var extension = Path.GetExtension(companyCreationDTO.BankAccountDoc.FileName);
+                    company.BankAccountDocPath = await almacenadorArchivos
+                        .GuardarArchivoCompany(companyName, BankAccountFileName, companyCreationDTO.BankAccountDoc);
 
                 }
             }
 
-            if (companyCreationDTO.RutDocPath != null)
+            if (companyCreationDTO.RutDoc != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await companyCreationDTO.RutDocPath.CopyToAsync(memoryStream);
+                    await companyCreationDTO.RutDoc.CopyToAsync(memoryStream);
                     var contenido = memoryStream.ToArray();
                     var companyName = companyCreationDTO.Name;
-                    var extension = Path.GetExtension(companyCreationDTO.RutDocPath.FileName);
-                    company.RutDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
-                    companyCreationDTO.RutDocPath.ContentType, companyName, RutFileName);
+                    var extension = Path.GetExtension(companyCreationDTO.RutDoc.FileName);
+                    company.RutDocPath = await almacenadorArchivos
+                        .GuardarArchivoCompany(companyName, RutFileName, companyCreationDTO.RutDoc);
 
                 }
             }
@@ -121,7 +119,7 @@ namespace SolicitudesAPI.Controllers
             }
 
             var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
-            
+
             var companyDetails = mapper.Map<CompanyDetailsDTO>(company);
 
             return Ok(companyDetails);
@@ -217,8 +215,8 @@ namespace SolicitudesAPI.Controllers
             return Ok(companyDocs);
         }
 
-        [HttpPut ("UpdateFile")]
-        public async Task<IActionResult> UpdateCompanyFile([FromForm] int companyId,  
+        [HttpPut("UpdateFile")]
+        public async Task<IActionResult> UpdateCompanyFile([FromForm] int companyId,
             string fileToUpdate, IFormFile file)
         {
 
@@ -271,45 +269,28 @@ namespace SolicitudesAPI.Controllers
 
                     case "rut":
                         string companyRut = await context.Companies
-                                                   .Where(x => x.CompanyId == companyId).Select(y => y.RutDocPath).FirstOrDefaultAsync();
-                        if (companyRut.EndsWith("Temp.png") || companyRut.StartsWith(@"https://peakrweb.blob.core.windows.net"))
-                        {
-                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
-                        }
-                        else
-                        {
-                            await almacenadorArchivos.BorrarArchivo(companyRut, contenedor, companyName);
-                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
-                        }
+                        .Where(x => x.CompanyId == companyId).Select(y => y.RutDocPath).FirstOrDefaultAsync();
+                        await almacenadorArchivos.BorrarArchivo(companyRut, contenedor, companyName);
+                        newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, RutFileName, file);
                         companyRecord.RutDocPath = newPath;
                         break;
 
                     case "exist":
                         string companyExist = await context.Companies
-                                                   .Where(x => x.CompanyId == companyId).Select(y => y.LegalExistenceDocPath).FirstOrDefaultAsync();
-                        if (companyExist.EndsWith("Temp.png") || companyExist.StartsWith(@"https://peakrweb.blob.core.windows.net"))
-                        {
-                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
-                        }
-                        else
-                        {
-                            await almacenadorArchivos.BorrarArchivo(companyExist, contenedor, companyName);
-                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
-                        }
+                        .Where(x => x.CompanyId == companyId).Select(y => y.LegalExistenceDocPath).FirstOrDefaultAsync();
+
+                        await almacenadorArchivos.BorrarArchivo(companyExist, contenedor, companyName);
+                        newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, LegalExistenceFileName, file);
+
                         companyRecord.LegalExistenceDocPath = newPath;
                         break;
                     case "bank":
                         string companyBank = await context.Companies
                                                    .Where(x => x.CompanyId == companyId).Select(y => y.BankAccountDocPath).FirstOrDefaultAsync();
-                        if (companyBank.EndsWith("Temp.png") || companyBank.StartsWith(@"https://peakrweb.blob.core.windows.net"))
-                        {
-                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
-                        }
-                        else
-                        {
-                            await almacenadorArchivos.BorrarArchivo(companyBank, contenedor, companyName);
-                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
-                        }
+
+                        await almacenadorArchivos.BorrarArchivo(companyBank, contenedor, companyName);
+                        newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, BankAccountFileName, file);
+                        
                         companyRecord.BankAccountDocPath = newPath;
                         break;
 
