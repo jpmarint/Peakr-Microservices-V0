@@ -11,10 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\**" />
-    <Content Remove="Migrations\**" />
-    <EmbeddedResource Remove="Migrations\**" />
-    <None Remove="Migrations\**" />
+    <Content Include="Migrations\.vs\ProjectSettings.json" />
+    <Content Include="Migrations\.vs\VSWorkspaceState.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Migrations\.vs\Migrations\FileContentIndex\f9965238-7198-4a5b-8c50-6a478c628a1c.vsidx" />
+    <None Include="Migrations\.vs\Migrations\FileContentIndex\read.lock" />
+    <None Include="Migrations\.vs\slnx.sqlite" />
   </ItemGroup>	
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
@@ -33,6 +37,10 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+  </ItemGroup>	
+  <ItemGroup>
+    <Folder Include="Migrations\.vs\Migrations\FileContentIndex\merges\" />
+    <Folder Include="Migrations\.vs\Migrations\v17\" />
   </ItemGroup>
 
 </Project>

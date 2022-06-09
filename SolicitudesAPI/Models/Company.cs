@@ -43,16 +43,9 @@ namespace SolicitudesAPI.Models
         //External
         [ForeignKey("Address")]
         public int? AddressId { get; set; }
-        //public string? UserRefId { get; set; }
-
-        //[ForeignKey("UserRefId")]
-        //public IdentityUser? User { get; set; }
-
-        public Address? Address { get; set; } = new Address();
-        public List<Request> requests { get; set; }
+        public Address? Address { get; set; } = new Address();       
         [NotMapped]
         public List<SelectListItem>? ProductCategories { get; set; }
-
         [NotMapped]
         public List<int>? SelectedCategories { get; set; }
 

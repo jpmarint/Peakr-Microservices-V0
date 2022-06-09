@@ -5,11 +5,12 @@ namespace SolicitudesAPI.Models
 {
     public class QuoteRequest
     {
-        public QuoteRequest(int requestId, int quoteId, int workflowStatusId = 0)
+        public QuoteRequest() { }
+        public QuoteRequest(Request request, Quote quote, WorkflowStatus workflowStatus = null)
         {
-            this.RequestId = requestId;
-            this.QuoteId = quoteId;
-            this.WorkflowStatusId = workflowStatusId;
+            this.Request = request;
+            this.Quote = quote;
+            this.QuoteRequestStatus = workflowStatus;
         }
 
         [Key]

@@ -23,7 +23,7 @@ namespace SolicitudesAPI.DTOs.RequestDTOs
         [Required]
         public string ProductNeeds { get; set; }
 
-        public IFormFile FilePath { get; set; }
+        public string FilePath { get; set; }
 
         public string FileName { get; set; }
 
