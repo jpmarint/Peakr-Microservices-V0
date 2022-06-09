@@ -7,10 +7,9 @@ namespace SolicitudesAPI.Models
 
         public int CompanyId { get; set; }
         [Required]
-        [Range(0,1)]
-        public int CompanyType { get; set; }
-        public string? ImagePath { get; set; } = "../img/BannerTemp.png";
-        public string? LogoPath { get; set; } = "../img/LogoTemp.png";
+        public bool CompanyType { get; set; }
+        public string? ImagePath { get; set; } = "https://peakrweb.blob.core.windows.net/logos/BannerTemp.png";
+        public string? LogoPath { get; set; } = "https://peakrweb.blob.core.windows.net/logos/LogoTemp.png";
 
         [Required(ErrorMessage = "El nombre de la empresa es requerido")]
         public string? Name { get; set; }
@@ -19,6 +18,7 @@ namespace SolicitudesAPI.Models
         public string? Email { get; set; }
         public string? Description { get; set; }
         public DateTime? EstablishedSince { get; set; }
+
         [Required(ErrorMessage = "El NIT es requerido")]
         public string? NIT { get; set; }
         public string? WebSiteUrl { get; set; }
