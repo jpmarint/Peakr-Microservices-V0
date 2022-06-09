@@ -35,14 +35,18 @@ namespace SolicitudesAPI
         public DbSet<Request> Requests { get; set; }
 
         public DbSet<Quote> Quotes { get; set; }
+        public DbSet<WorkflowStatus> WorkflowStatus { get; set; }
+        public DbSet<ContactUs> ContactUs { get; set; }
 
         public DbSet<QuoteRequest> QuoteRequest { get; set; }
 
+        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<CompanyCategory> CompanyCategories { get; set; }
 
         public DbSet<RequestCategory> RequestCategories { get; set; }
 
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
 
     }
     

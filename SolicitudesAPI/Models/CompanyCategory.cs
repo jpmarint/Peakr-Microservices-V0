@@ -10,8 +10,8 @@ namespace SolicitudesAPI.Models
 
         public int CategoryId { get; set; }
 
-        public Category Category { get; set; }
+        public virtual Category Category { get; set; }
 
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
     }
 }

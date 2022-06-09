@@ -8,7 +8,14 @@
 	  <Nowarn>$(Nowarn);1591</Nowarn>
 	  <ApplicationInsightsResourceId>/subscriptions/fffb95bd-6554-403d-8926-d5718d5ac688/resourceGroups/APIProcurement/providers/microsoft.insights/components/SolicitudesAPI</ApplicationInsightsResourceId>
 	  <UserSecretsId>4355020b-d87f-43d1-b596-55d1138c2155</UserSecretsId>
-  </PropertyGroup>	
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\**" />
+    <Content Remove="Migrations\**" />
+    <EmbeddedResource Remove="Migrations\**" />
+    <None Remove="Migrations\**" />
+  </ItemGroup>	
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />

@@ -10,16 +10,12 @@ namespace SolicitudesAPI.Models
         public int CategoryId { get; set; }
 
         public int CategoryCode { get; set; }
-
+       
         [Required]
         public string Description { get; set; }
 
         [Required]
         public string Name { get; set; }
-
-        public List<CompanyCategory> companyCategories { get; set; }
-
-        public List<RequestCategory> requestCategories { get; set; }
 
     }
 }

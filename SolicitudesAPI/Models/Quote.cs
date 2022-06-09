@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SolicitudesAPI.Models
 {
@@ -14,6 +15,8 @@ namespace SolicitudesAPI.Models
 
         [Required]
         public int DeliveryDeadLineInDays { get; set; }
+
+        public string? FilePath { get; set; } = string.Empty;
 
         [Required]
         public DateTime QuoteExpirationDate { get; set; }
@@ -52,17 +55,30 @@ namespace SolicitudesAPI.Models
         [Precision(18, 2)]
         public decimal SellerIncome { get; set; }
 
-        [Required]
-        public string NotesToClient { get; set; }
 
+        public string? NotesToClient { get; set; }
+
+        [Required]
+        public string PaymentConditions { get; set; }
 
         [Required]
         public bool IsProductExactMatch { get; set; }
 
-        public int CompanyId { get; set; }
+        [Required]
+        public int State { get; set; } = 0;
 
+        /*************************************************************************
+         * Navigation properties
+         *************************************************************************/
+        [ForeignKey("Company")]
+        public int CompanyId;
         public virtual Company Company { get; set; }
 
-        public List<QuoteRequest> QuoteRequests { get; set; }
+
+        [ForeignKey("Request")]
+        public int RequestId;
+        public virtual Request Request { get; set; }
+
+        public QuoteRequest QuoteRequest { get; set; }
     }
 }

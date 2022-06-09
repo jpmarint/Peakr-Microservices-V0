@@ -1,13 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SolicitudesAPI.Models
 {
     public class Request
     {
 
+        public Request()
+        {
+            Quotes = new HashSet<Quote>();
+            Categories = new HashSet<RequestCategory>();
+
+        }
+
         [Key]
         [Required]
         public int RequestId { get; set; }
+
         [Required]
         public string QuerySearch { get; set; }
 
@@ -19,34 +29,44 @@ namespace SolicitudesAPI.Models
         public DateTime RequestDate { get; set; }
 
         [Required]
+        public Address? Address { get; set; } = new Address();
+
+        [Required]
         public string PaymentConditions { get; set; }
 
 
         [Required]
         public int Quantity { get; set; }
 
-        [Required]
-        public string ProductNeeds { get; set; }
+
+        public string? ProductNeeds { get; set; } = string.Empty;
 
         public int? ChosenQuote { get; set; }
 
-        public string deliveryInstructions { get; set; }
-
-        public int CompanyId { get; set; }
-
-        public virtual Company Companies { get; set; }
-
-        public string? StatusRequest { get; set; }
-
         public string? FilePath { get; set; } = string.Empty;
 
-        public string? FileName { get; set; }
 
-        public int AddressId { get; set; }
-        public Address? Address { get; set; }
+        [NotMapped]
+        public List<SelectListItem> ProductCategories { get; set; }
 
-        public List<QuoteRequest> QuoteRequest { get; set; }
+        [NotMapped]
+        public List<int> SelectedCategories { get; set; }
 
-        public List<RequestCategory> requestCategories { get; set; }
+
+        [NotMapped]
+        public string CompanyLogo { get; set; }
+
+
+        /*************************************************************************
+         * Navigation properties
+         *************************************************************************/
+
+        [ForeignKey("Company")]
+        public int CompanyId { get; set; }
+        public virtual Company Company { get; set; }
+
+        public virtual ICollection<Quote> Quotes { get; set; }
+
+        public virtual ICollection<RequestCategory> Categories { get; private set; }
     }
 }
