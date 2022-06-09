@@ -146,35 +146,35 @@ namespace SolicitudesAPI.Controllers
             return Ok(mapper.Map<AddressDTO>(address));
         }
 
-        [HttpGet("Docs")]
-        public async Task<IActionResult> GetCompanyDocs(int companyId)
-        {
-            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-            if (!exist)
-            {
-                return NotFound("No existe esta compañía");
-            }
+        //[HttpGet("Docs")]
+        //public async Task<IActionResult> GetCompanyDocs(int companyId)
+        //{
+        //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+        //    if (!exist)
+        //    {
+        //        return NotFound("No existe esta compañía");
+        //    }
 
-            var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
+        //    var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
 
-            var companyDocs = mapper.Map<CompanyDocsDTO>(company);
+        //    var companyDocs = mapper.Map<CompanyDocsDTO>(company);
 
-            return Ok(companyDocs);
-        }
+        //    return Ok(companyDocs);
+        //}
 
-        [HttpPost("UpdateDetails")]
-        public async Task<IActionResult> UpdateCompanyDetails(CompanyDetailsDTO companyDetails)
-        {
-            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyDetails.CompanyId);
-            if (!exist)
-            {
-                return NotFound("No existe esta compañía");
-            }
+        //[HttpPost("UpdateDetails")]
+        //public async Task<IActionResult> UpdateCompanyDetails(CompanyDetailsDTO companyDetails)
+        //{
+        //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyDetails.CompanyId);
+        //    if (!exist)
+        //    {
+        //        return NotFound("No existe esta compañía");
+        //    }
 
             
             
-            return Ok("Los detalles de la compañía se actualizaron.");
-        }
+        //    return Ok("Los detalles de la compañía se actualizaron.");
+        //}
 
 
     }

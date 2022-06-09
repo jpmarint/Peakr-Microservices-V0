@@ -14,9 +14,8 @@ namespace SolicitudesAPI.DTOs.CompanyDTOs
         public string Nit { get; set; }
         [Required]
         public string Name { get; set; }
-        [Required]
-        [Range(0, 1)]
-        public int CompanyType { get; set; }
+        [Required]       
+        public bool CompanyType { get; set; }
         [Required]
         [PesoArchivoValidacion(PesoMaximoEnMegaBytes: 6)]
         [TipoArchivoValidacion(GrupoTipoArchivo.File)]

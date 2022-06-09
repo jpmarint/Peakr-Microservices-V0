@@ -3,9 +3,7 @@
     public class CompanyDetailsDTO
     {
         public int CompanyId { get; set; }
-        public int CompanyType { get; set; }
-        public string ImagePath { get; set; }
-        public string LogoPath { get; set; }
+        public int CompanyType { get; set; }       
         public string Name { get; set; }
         public string Email { get; set; }
         public string Description { get; set; }

@@ -22,55 +22,55 @@ namespace SolicitudesAPI.Controllers
         }
 
         //endpoint para guardar "documento para ilustrar" en newrequest
-        [HttpPost("UploadFile")]
-        public async Task<IActionResult> UploadDocument(IFormFile file, int origin, int companyId)
-        {
+        //[HttpPost("UploadFile")]
+        //public async Task<IActionResult> UploadDocument(IFormFile file, int origin, int companyId)
+        //{
 
-            if (file != null)
-            {
+        //    if (file != null)
+        //    {
                 
-                using (var memoryStream = new MemoryStream())
-                {
-                    var fileDto = new FileDTO();
-                    await file.CopyToAsync(memoryStream);
-                    var contenido = memoryStream.ToArray();
-                    var extension = Path.GetExtension(file.FileName);
-                    var companyName = await context.Companies
-                        .Where(companyDB => companyDB.CompanyId == companyId)
-                        .Select(x => x.Name).FirstOrDefaultAsync();
-                    var fileName = file.FileName;
-                    var contenedor = "";
-                    switch (origin)
-                    {
-                        case 0: // 0 => Request Creation
-                           contenedor = $"documentos/{companyName}/requests";
-                           fileDto.result = $"Almacenado en {contenedor}";
-                            break;
-                        case 1:  // 1 => Quote Creation
-                           contenedor = $"documentos/{companyName}/quotes";
-                           fileDto.result = $"Almacenado en {contenedor}";
-                            break;
-                        case 2:  // 2 => Company Profile Documents Update
-                           contenedor = $"documentos/{companyName}";
-                           fileDto.result = $"Almacenado en {contenedor}";
-                            break;
-                        default:
-                            return BadRequest("Origen no existe");                     
-                    } 
-                    var filePath = await almacenadorArchivos
-                        .GuardarArchivoRequest(contenido, extension, contenedor,
-                    file.ContentType, fileName);
+        //        using (var memoryStream = new MemoryStream())
+        //        {
+        //            var fileDto = new FileDTO();
+        //            await file.CopyToAsync(memoryStream);
+        //            var contenido = memoryStream.ToArray();
+        //            var extension = Path.GetExtension(file.FileName);
+        //            var companyName = await context.Companies
+        //                .Where(companyDB => companyDB.CompanyId == companyId)
+        //                .Select(x => x.Name).FirstOrDefaultAsync();
+        //            var fileName = file.FileName;
+        //            var contenedor = "";
+        //            switch (origin)
+        //            {
+        //                case 0: // 0 => Request Creation
+        //                   contenedor = $"documentos/{companyName}/requests";
+        //                   fileDto.result = $"Almacenado en {contenedor}";
+        //                    break;
+        //                case 1:  // 1 => Quote Creation
+        //                   contenedor = $"documentos/{companyName}/quotes";
+        //                   fileDto.result = $"Almacenado en {contenedor}";
+        //                    break;
+        //                case 2:  // 2 => Company Profile Documents Update
+        //                   contenedor = $"documentos/{companyName}";
+        //                   fileDto.result = $"Almacenado en {contenedor}";
+        //                    break;
+        //                default:
+        //                    return BadRequest("Origen no existe");                     
+        //            } 
+        //            var filePath = await almacenadorArchivos
+        //                .GuardarArchivoRequest(contenido, extension, contenedor,
+        //            file.ContentType, fileName);
 
-                    fileDto.FilePath = filePath;
-                    fileDto.FileName = fileName;
+        //            fileDto.FilePath = filePath;
+        //            fileDto.FileName = fileName;
 
-                    return ((IActionResult)fileDto);
-                }
-            }
-            else
-            {
-                return BadRequest("debe cargar un documento");
-            }
-        }
+        //            return ((IActionResult)fileDto);
+        //        }
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("debe cargar un documento");
+        //    }
+        //}
     }
 }
