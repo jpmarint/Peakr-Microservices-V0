@@ -12,5 +12,7 @@
         public string WebSiteUrl { get; set; }
         public string TotalEmployees { get; set; }
         public string YearlySalesVolume { get; set; }
+
+
     }
 }

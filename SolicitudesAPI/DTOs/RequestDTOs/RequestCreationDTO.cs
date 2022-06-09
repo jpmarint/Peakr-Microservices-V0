@@ -17,7 +17,6 @@ namespace SolicitudesAPI.DTOs.RequestDTOs
         [Required]
         public string PaymentConditions { get; set; }
 
-
         [Required]
         public int Quantity { get; set; }
 
@@ -33,8 +32,7 @@ namespace SolicitudesAPI.DTOs.RequestDTOs
         public string deliveryInstructions { get; set; }
         [Required]
         public int CompanyId { get; set; }
-        [Required]
-        public string StatusRequest { get; set; }
+        
         [Required]
         public int AddressId { get; set; }
 

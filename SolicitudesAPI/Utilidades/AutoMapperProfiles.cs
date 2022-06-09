@@ -15,6 +15,9 @@ namespace SolicitudesAPI.Utilidades
 
             CreateMap<Address, AddressDTO>().ReverseMap();
 
+            CreateMap<Category, CategoriesDTO>().ReverseMap()
+            .ForMember(categoriesDTO => categoriesDTO.companyCategories, opciones => opciones.MapFrom(MapRequestQuotesList));
+
             CreateMap<Quote, QuoteDTO2>().ReverseMap();
             CreateMap<Request, RequestModalDTO>()
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
@@ -40,10 +43,12 @@ namespace SolicitudesAPI.Utilidades
 
             CreateMap<QuoteRequest, QuoteRequestDTO>().ReverseMap();
 
-            CreateMap<Request, RequestDTO>()
+            CreateMap<Request, RequestSellerDTO>()
                 .ForMember(x => x.CompanyName, x => x.MapFrom(y => y.Companies.Name))
                 .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Companies.LogoPath))
                 .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Companies.WebSiteUrl));
+
+            CreateMap<Request, RequestBuyerDTO>().ReverseMap();
 
             CreateMap<QuoteCreationDTO, Quote>()
                 .ForMember(quote => quote.QuoteRequests, opciones => opciones.MapFrom(MapQuoteRequest));
