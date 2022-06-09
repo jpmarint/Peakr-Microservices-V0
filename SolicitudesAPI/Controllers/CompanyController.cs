@@ -128,24 +128,26 @@ namespace SolicitudesAPI.Controllers
         }
 
 
-        [HttpGet("GetLogo")]
-        public async Task<IActionResult> GetLogo(int companyId)
-        {
+        //[HttpGet("GetLogo")]
+        //public async Task<IActionResult> GetLogo(int companyId)
+        //{
 
-            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-            if (!exist)
-            {
-                return NotFound("No existe esta compañía");
-            }
+        //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+        //    if (!exist)
+        //    {
+        //        return NotFound("No existe esta compañía");
+        //    }
 
-            var companyLogoPath = await context.Companies
-                .Where(x => x.CompanyId == companyId)
-                .Select(u => u.LogoPath)
-                .FirstOrDefaultAsync();
+        //    var companyLogoPath = await context.Companies
+        //        .Where(x => x.CompanyId == companyId)
+        //        .Select(u => u.LogoPath)
+        //        .FirstOrDefaultAsync();
 
-            return Ok(companyLogoPath);
+        //    companyLogoPath = almacenadorArchivos.GenerateSASTokenForFile(companyLogoPath);
 
-        }
+        //    return Ok(companyLogoPath);
+
+        //}
 
         [HttpGet("Address")]
         public async Task<IActionResult> GetCompanyAddress(int companyId)
@@ -190,21 +192,145 @@ namespace SolicitudesAPI.Controllers
         //}
 
 
-        //[HttpGet("Docs")]
-        //public async Task<IActionResult> GetCompanyFiles(int companyId)
-        //{
-        //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-        //    if (!exist)
-        //    {
-        //        return NotFound("No existe esta compañía");
-        //    }
+        [HttpGet("GetFiles")]
+        public async Task<IActionResult> GetCompanyFiles(int companyId)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
 
-        //    var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
+            var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
 
-        //    var companyDocs = mapper.Map<CompanyDocsDTO>(company);
+            var companyDocs = mapper.Map<CompanyDocsDTO>(company);
 
-        //    return Ok(companyDocs);
-        //}
+            companyDocs.LogoPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.LogoPath);
+            companyDocs.ImagePath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.ImagePath);
+            companyDocs.RutDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.RutDocPath);
+            companyDocs.BankAccountDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.BankAccountDocPath);
+            companyDocs.LegalExistenceDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.LegalExistenceDocPath);
+            //companyDocs.PeakrContractDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.PeakrContractDocPath);
+
+            //generar SASToken para cada archivo...
+
+            return Ok(companyDocs);
+        }
+
+        [HttpPut ("UpdateFile")]
+        public async Task<IActionResult> UpdateCompanyFile([FromForm] int companyId,  
+            string fileToUpdate, IFormFile file)
+        {
+
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+
+            if (file != null)
+            {
+                string newPath = string.Empty;
+                var companyRecord = await context.Companies
+                        .Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+
+                string companyName = companyRecord.Name;
+
+                fileToUpdate = fileToUpdate.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+                switch (fileToUpdate)
+                {
+                    case "logo":
+                        string companyLogo = await context.Companies
+                            .Where(x => x.CompanyId == companyId).Select(y => y.LogoPath).FirstOrDefaultAsync();
+                        if (companyLogo.EndsWith("Temp.png") || companyLogo.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+                        {
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        else
+                        {
+                            await almacenadorArchivos.BorrarArchivo(companyLogo, contenedor, companyName);
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        companyRecord.LogoPath = newPath;
+                        break;
+                    case "banner":
+                        string companyBanner = await context.Companies
+                            .Where(x => x.CompanyId == companyId).Select(y => y.ImagePath).FirstOrDefaultAsync();
+                        if (companyBanner.EndsWith("Temp.png") || companyBanner.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+                        {
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        else
+                        {
+                            await almacenadorArchivos.BorrarArchivo(companyBanner, contenedor, companyName);
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        companyRecord.ImagePath = newPath;
+                        break;
+
+                    case "rut":
+                        string companyRut = await context.Companies
+                                                   .Where(x => x.CompanyId == companyId).Select(y => y.RutDocPath).FirstOrDefaultAsync();
+                        if (companyRut.EndsWith("Temp.png") || companyRut.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+                        {
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        else
+                        {
+                            await almacenadorArchivos.BorrarArchivo(companyRut, contenedor, companyName);
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        companyRecord.RutDocPath = newPath;
+                        break;
+
+                    case "exist":
+                        string companyExist = await context.Companies
+                                                   .Where(x => x.CompanyId == companyId).Select(y => y.LegalExistenceDocPath).FirstOrDefaultAsync();
+                        if (companyExist.EndsWith("Temp.png") || companyExist.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+                        {
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        else
+                        {
+                            await almacenadorArchivos.BorrarArchivo(companyExist, contenedor, companyName);
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        companyRecord.LegalExistenceDocPath = newPath;
+                        break;
+                    case "bank":
+                        string companyBank = await context.Companies
+                                                   .Where(x => x.CompanyId == companyId).Select(y => y.BankAccountDocPath).FirstOrDefaultAsync();
+                        if (companyBank.EndsWith("Temp.png") || companyBank.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+                        {
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        else
+                        {
+                            await almacenadorArchivos.BorrarArchivo(companyBank, contenedor, companyName);
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        companyRecord.BankAccountDocPath = newPath;
+                        break;
+
+                    default:
+
+                        return BadRequest("El archivo que deseas cambiar no existe");
+
+                }
+
+                context.Update(companyRecord);
+                context.SaveChanges();
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Debe subir un archivo");
+            }
+
+            return Ok();
+
+        }
 
 
         //[HttpPost("UpdateDetails")]

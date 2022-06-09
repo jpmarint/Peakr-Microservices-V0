@@ -15,29 +15,41 @@ namespace SolicitudesAPI.Servicios
             _connectionString = configuration.GetConnectionString("AzureStorage");
         }
 
-        public async Task BorrarArchivo(string ruta, string contenedor)
+        public async Task BorrarArchivo(string ruta, string contenedor, string companyName)
         {
+
+            var fileNamewExt = string.Empty;
+
             if (string.IsNullOrEmpty(ruta))
             {
                 return;
             }
 
-            var cliente = new BlobContainerClient(_connectionString, contenedor);
-            await cliente.CreateIfNotExistsAsync();
-            var archivo = Path.GetFileName(ruta);
-            var blob = cliente.GetBlobClient(archivo);
-            await blob.DeleteIfExistsAsync();
+            try
+            {
+                companyName = companyName.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+                string connectionString = _connectionString;
+                BlobContainerClient container = new BlobContainerClient(connectionString, documentos);
+                fileNamewExt = string.Format($"{ruta}");
+                BlobClient blobcli = container.GetBlobClient(fileNamewExt);  
+                await blobcli.DeleteIfExistsAsync();
+
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
 
         }
-     
+
 
         public async Task<string> EditarArchivo(byte[] contenido, string extension,
             string contenedor, string ruta, string contentType, string companyName, string fileName)
         {
-            await BorrarArchivo(ruta, contenedor);
+            await BorrarArchivo(ruta,contenedor,companyName);
             return await GuardarArchivoCompany(contenido, extension, contenedor, contentType, companyName, fileName);
         }
-    
+
 
         //Enviando archivos hacia Azure
         public async Task<string> GuardarArchivoCompany(byte[] contenido, string extension, string contenedor,
@@ -54,7 +66,7 @@ namespace SolicitudesAPI.Servicios
             blobHttpHeader.ContentType = contentType;
             blobUploadOptions.HttpHeaders = blobHttpHeader;
             await blob.UploadAsync(new BinaryData(contenido), blobUploadOptions);
-            return blob.Uri.ToString();
+            return (archivoNombre);
         }
 
         public async Task<string> UploadFileToBlob(string companyName, IFormFile file)
@@ -83,7 +95,7 @@ namespace SolicitudesAPI.Servicios
                 throw (ex);
             }
 
-            return fileGuid;
+            return fileNamewExt;
         }
 
         public string GenerateSASTokenForFile(string fileName)
