@@ -1,15 +1,18 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Azure.Storage.Sas;
 
 namespace SolicitudesAPI.Servicios
 {
     public class AlmacenadorArchivosAzure : IAlmacenadorArchivos
     {
-        private readonly string connectionString;
+        private readonly string _connectionString;
+        private readonly string documentos = "documentos";
 
         public AlmacenadorArchivosAzure(IConfiguration configuration)
         {
-            connectionString = configuration.GetConnectionString("AzureStorage");
+            _connectionString = configuration.GetConnectionString("AzureStorage");
         }
 
         public async Task BorrarArchivo(string ruta, string contenedor)
@@ -19,7 +22,7 @@ namespace SolicitudesAPI.Servicios
                 return;
             }
 
-            var cliente = new BlobContainerClient(connectionString, contenedor);
+            var cliente = new BlobContainerClient(_connectionString, contenedor);
             await cliente.CreateIfNotExistsAsync();
             var archivo = Path.GetFileName(ruta);
             var blob = cliente.GetBlobClient(archivo);
@@ -40,7 +43,8 @@ namespace SolicitudesAPI.Servicios
         public async Task<string> GuardarArchivoCompany(byte[] contenido, string extension, string contenedor,
             string contentType, string companyName, string fileName)
         {
-            var cliente = new BlobContainerClient(connectionString, contenedor);
+            companyName = companyName.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+            var cliente = new BlobContainerClient(_connectionString, contenedor);
             await cliente.CreateIfNotExistsAsync();
             cliente.SetAccessPolicy(PublicAccessType.Blob);
             var archivoNombre = $"{companyName}/{fileName}{extension}";
@@ -53,21 +57,66 @@ namespace SolicitudesAPI.Servicios
             return blob.Uri.ToString();
         }
 
-        public async Task<string> GuardarArchivoRequest(byte[] contenido, string extension, string contenedor,
-            string contentType, string fileName)
+        public async Task<string> UploadFileToBlob(string companyName, IFormFile file)
         {
-            var cliente = new BlobContainerClient(connectionString, contenedor);
-            await cliente.CreateIfNotExistsAsync();
-            cliente.SetAccessPolicy(PublicAccessType.Blob);
-            var archivoNombre = $"{Guid.NewGuid()}{ extension}";
-            var blob = cliente.GetBlobClient(archivoNombre);
-            var blobUploadOptions = new BlobUploadOptions();
-            var blobHttpHeader = new BlobHttpHeaders();
-            blobHttpHeader.ContentType = contentType;
-            blobUploadOptions.HttpHeaders = blobHttpHeader;
-            await blob.UploadAsync(new BinaryData(contenido), blobUploadOptions);
-            return blob.Uri.ToString();
+            var fileNamewExt = String.Empty;
+            var fileGuid = String.Empty;
+            if (file == null)
+                return fileNamewExt;
+            try
+            {
+                companyName = companyName.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+                string connectionString = _connectionString;
+                BlobContainerClient container = new BlobContainerClient(connectionString, documentos);
+                container.CreateIfNotExists();
+                fileGuid = $"{Guid.NewGuid()}{ Path.GetExtension(file.FileName)}";
+                fileNamewExt = string.Format($"{companyName}/{fileGuid}");
+                BlobClient blob = container.GetBlobClient(fileNamewExt);
+                // Upload local file
+                using (var stream = file.OpenReadStream())
+                {
+                    await blob.UploadAsync(stream, true);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+            return fileGuid;
         }
+
+        public string GenerateSASTokenForFile(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return string.Empty;
+            }
+
+            if (fileName.EndsWith("Temp.png") || fileName.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+            {
+                return fileName;
+            }
+
+            BlobClient blobClient = new BlobClient(_connectionString, documentos, fileName);
+            if (blobClient.CanGenerateSasUri)
+            {
+                BlobSasBuilder sasBuilder = new BlobSasBuilder()
+                {
+                    BlobContainerName = blobClient.GetParentBlobContainerClient().Name,
+                    BlobName = blobClient.Name,
+                    Resource = "b",
+                };
+
+                sasBuilder.ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(5);
+                sasBuilder.SetPermissions(BlobSasPermissions.Read);
+                Uri sasUri = blobClient.GenerateSasUri(sasBuilder);
+                return sasUri.ToString();
+            }
+
+            return string.Empty;
+        }
+
 
     }
 }

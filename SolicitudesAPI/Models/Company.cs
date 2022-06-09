@@ -8,8 +8,8 @@ namespace SolicitudesAPI.Models
         public int CompanyId { get; set; }
         [Required]
         public bool CompanyType { get; set; }
-        public string? ImagePath { get; set; } = "../img/BannerTemp.png";
-        public string? LogoPath { get; set; } = "../img/LogoTemp.png";
+        public string? ImagePath { get; set; } = "https://peakrweb.blob.core.windows.net/logos/BannerTemp.png";
+        public string? LogoPath { get; set; } = "https://peakrweb.blob.core.windows.net/logos/LogoTemp.png";
 
         [Required(ErrorMessage = "El nombre de la empresa es requerido")]
         public string? Name { get; set; }
