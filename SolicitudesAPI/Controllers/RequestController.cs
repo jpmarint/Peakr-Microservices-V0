@@ -26,25 +26,50 @@ namespace SolicitudesAPI.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-        [HttpGet("GetAddress")]
-        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
-        {
-
-            var address = await context.Address
-                .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
-
-            return mapper.Map<AddressDTO>(address);
-
-        }
-
-        //[HttpPost("NewRequest", Name = "NewRequest")]
-        //public async Task<IActionResult> NewRequest(string search)
+        //[HttpGet("GetAddress")]
+        //public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
         //{
-        //    var resultado1 = search;    
 
-        //    return Ok(resultado1);
+        //    var address = await context.Address
+        //        .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
+
+        //    return mapper.Map<AddressDTO>(address);
 
         //}
+
+        [HttpGet("NewRequest", Name = "NewRequest")]
+        public async Task<IActionResult> NewRequest(string search, int companyId)
+        {
+
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var companyAddressId = await context.Companies
+                .Where(x => x.CompanyId == companyId)
+                .Select(u => u.AddressId)
+                .FirstOrDefaultAsync();
+
+            var address = await context.Address
+                .Where(addressDB => addressDB.AddressId == companyAddressId).FirstOrDefaultAsync();
+
+            RequestSearchDTO requestSearchDTO = new RequestSearchDTO
+            {
+                QuerySearch = search,
+                RequestDate = DateTime.Now,
+                Department = address.Department,
+                City =  address.City,
+                Line1 = address.Line1,
+                Line2 = address.Line2,
+                PostalCode = address.PostalCode,               
+                Notes = address.Notes
+            };
+
+            return Ok(requestSearchDTO);
+
+        }
 
         /// <summary>
         /// Register a new request
@@ -71,12 +96,9 @@ namespace SolicitudesAPI.Controllers
                 return BadRequest("No existe una de las categorias enviadas");
             }
 
-
-
             var request = mapper.Map<Request>(requestCreationDTO);
             context.Add(request);
             await context.SaveChangesAsync();
-            var dto = mapper.Map<RequestDTO>(request);
             return Ok(request);
         }
 
@@ -85,7 +107,7 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         // <param name="requestId"></param>
         /// <returns></returns>
-     
+
         [HttpGet("RequestDetail", Name = "RequestDetailasSeller")]
         public async Task<ActionResult<RequestDetailDTO>> GetDetail(int requestId)
         {
@@ -106,14 +128,9 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<RequestDetailDTO>(request);
         }
 
-        /// <summary>
-        /// pending requests without quote
-        /// </summary>
-        // <param name="companyId"></param>
-        /// <returns></returns>
 
-        [HttpGet("Pending", Name = "RequestAsSeller/Pending")]
-        public async Task<ActionResult<List<RequestDTO>>> GetPending(int companyId)
+        [HttpGet("AllRequestsAsSeller", Name = "AllRequestsAsSeller")]
+        public async Task<ActionResult<List<RequestSellerDTO>>> GetAllRequestsAsSeller(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
 
@@ -123,22 +140,18 @@ namespace SolicitudesAPI.Controllers
             }
 
             var request = await context.Requests.Include(x => x.Companies)
-                .Where(requestDB => requestDB.CompanyId == companyId &&
-            (requestDB.StatusRequest.Contains("por cotizar")) ||
-            (requestDB.StatusRequest.Contains("por adjudicar")) ||
-            (requestDB.StatusRequest.Contains("vencida")) ||
-            (requestDB.StatusRequest.Contains("cerrada"))).ToListAsync();
-            return mapper.Map<List<RequestDTO>>(request);
+                .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
+            return mapper.Map<List<RequestSellerDTO>>(request);
         }
 
-        /// <summary>
-        /// requests approved and purchase order placed
-        /// </summary>
-        // <param name="companyId"></param>
-        /// <returns></returns>
- 
-        [HttpGet("Sold", Name = "RequestAsSeller/Sold")]
-        public async Task<ActionResult<List<RequestDTO>>> GetSold(int companyId)
+        ///// <summary>
+        ///// requests approved and purchase order placed
+        ///// </summary>
+        //// <param name="companyId"></param>
+        ///// <returns></returns>
+
+        [HttpGet("AllRequestsAsBuyer", Name = "AllRequestsAsBuyer")]
+        public async Task<ActionResult<List<RequestBuyerDTO>>> GetAllRequestsAsBuyer(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
 
@@ -147,16 +160,24 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("La compañia no existe en el sistema");
             }
 
-            var request = await context.Requests.Include(x => x.Companies)
-                .Where(requestDB => requestDB.CompanyId == companyId &&
-            (requestDB.StatusRequest.Contains("por enviar")) ||
-            (requestDB.StatusRequest.Contains("en camino")) ||
-            (requestDB.StatusRequest.Contains("entregado")) ||
-            (requestDB.StatusRequest.Contains("Recibido"))).ToListAsync();
-            return mapper.Map<List<RequestDTO>>(request);
+            var requests = await context.Requests.Include(x => x.Companies)
+                .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
+
+            var result = mapper.Map<List<RequestBuyerDTO>>(requests);
+
+            int qty = 0;
+
+            foreach (var req in result)
+            {
+                qty = await context.QuoteRequest.Where(x => x.RequestId == req.RequestId).CountAsync();
+                req.QuotesQty = qty;
+                qty = 0;
+            }
+
+            return Ok(result);
         }
 
 
 
-    }
+        }
 }

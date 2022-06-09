@@ -127,6 +127,26 @@ namespace SolicitudesAPI.Controllers
             return Ok(companyDetails);
         }
 
+
+        [HttpGet("GetLogo")]
+        public async Task<IActionResult> GetLogo(int companyId)
+        {
+
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var companyLogoPath = await context.Companies
+                .Where(x => x.CompanyId == companyId)
+                .Select(u => u.LogoPath)
+                .FirstOrDefaultAsync();
+
+            return Ok(companyLogoPath);
+
+        }
+
         [HttpGet("Address")]
         public async Task<IActionResult> GetCompanyAddress(int companyId)
         {
@@ -146,8 +166,32 @@ namespace SolicitudesAPI.Controllers
             return Ok(mapper.Map<AddressDTO>(address));
         }
 
+        //[HttpGet("GetCategories")]
+        //public async Task<ActionResult<CategoriesDTO>> GetCategories(int companyId)
+        //{
+        //    var noexiste = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+
+        //    if (!noexiste)
+        //    {
+        //        return NotFound("No existe esa compañia");
+        //    }
+
+        //    var company = await context.Companies.Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+
+        //    context.Entry(company).Collection(c => c.companyCategories).Load();
+        //    company.ProductCategories = _db.Categories.Select(x => new SelectListItem { Text = x.Name, Value = x.CategoryId.ToString() }).ToList();
+        //    company.ProductCategories.ForEach(x => {
+        //        if (company.Categories.Any(y => (y.CategoryId.ToString() == x.Value)))
+        //        {
+        //            x.Selected = true;
+        //        }
+        //    });
+
+        //}
+
+
         //[HttpGet("Docs")]
-        //public async Task<IActionResult> GetCompanyDocs(int companyId)
+        //public async Task<IActionResult> GetCompanyFiles(int companyId)
         //{
         //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
         //    if (!exist)
@@ -162,6 +206,7 @@ namespace SolicitudesAPI.Controllers
         //    return Ok(companyDocs);
         //}
 
+
         //[HttpPost("UpdateDetails")]
         //public async Task<IActionResult> UpdateCompanyDetails(CompanyDetailsDTO companyDetails)
         //{
@@ -171,8 +216,8 @@ namespace SolicitudesAPI.Controllers
         //        return NotFound("No existe esta compañía");
         //    }
 
-            
-            
+
+
         //    return Ok("Los detalles de la compañía se actualizaron.");
         //}
 

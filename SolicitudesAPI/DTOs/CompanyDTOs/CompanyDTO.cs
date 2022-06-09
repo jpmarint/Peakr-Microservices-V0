@@ -7,7 +7,7 @@ namespace SolicitudesAPI.DTOs.CompanyDTOs
     {
         public string Name { get; set; }
         public string WebSiteUrl { get; set; }
-        public List<RequestDTO> Requests { get; set; }
+        public List<RequestSellerDTO> Requests { get; set; }
 
     }
 }

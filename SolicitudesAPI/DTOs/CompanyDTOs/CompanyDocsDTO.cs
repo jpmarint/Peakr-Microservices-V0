@@ -8,5 +8,7 @@
         public string BankAccountDocPath { get; set; }
         public string RutDocPath { get; set; }
         public string PeakrContractDocPath { get; set; }
+        public string ImagePath { get; set; } 
+        public string LogoPath { get; set; } 
     }
 }

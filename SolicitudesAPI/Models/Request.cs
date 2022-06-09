@@ -36,7 +36,7 @@ namespace SolicitudesAPI.Models
 
         public virtual Company Companies { get; set; }
 
-        public string StatusRequest { get; set; }
+        public string? StatusRequest { get; set; }
 
         public string? FilePath { get; set; } = string.Empty;
 
