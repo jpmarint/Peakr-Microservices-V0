@@ -119,11 +119,11 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("No existe esa solicitud");
             }
 
-            var request = await context.Requests.Include(requestDB => requestDB.QuoteRequest)
-                .ThenInclude(requestQuoteDB => requestQuoteDB.Quote)
+            var request = await context.Requests.Include(requestDB => requestDB.Quotes)
                 .FirstOrDefaultAsync(x => x.RequestId == requestId);
 
             context.Entry(request).Reference(x => x.Address).Load();
+            
 
             return mapper.Map<RequestDetailDTO>(request);
         }
@@ -139,8 +139,9 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("La compañia no existe en el sistema");
             }
 
-            var request = await context.Requests.Include(x => x.Companies)
+            var request = await context.Requests.Include(x => x.Company)
                 .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
+
             return mapper.Map<List<RequestSellerDTO>>(request);
         }
 
@@ -160,7 +161,7 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("La compañia no existe en el sistema");
             }
 
-            var requests = await context.Requests.Include(x => x.Companies)
+            var requests = await context.Requests.Include(x => x.Company)
                 .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
 
             var result = mapper.Map<List<RequestBuyerDTO>>(requests);

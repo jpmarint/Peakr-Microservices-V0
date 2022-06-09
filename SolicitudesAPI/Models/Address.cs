@@ -18,8 +18,6 @@ namespace SolicitudesAPI.Models
         public string? Department { get; set; }
         public string? City { get; set; }
         public string? Notes { get; set; }
-        public List<Request> Requests { get; set; }
-        public List<Company> Companies { get; set; }
 
 
     }

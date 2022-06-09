@@ -1,10 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SolicitudesAPI.Models
 {
     public class Company
     {
-
+        public Company()
+        {
+            Categories = new HashSet<CompanyCategory>();
+            Requests = new HashSet<Request>();
+            Quotes = new HashSet<Quote>();
+            PurchaseOrdersSells = new HashSet<PurchaseOrder>();
+            PurchaseOrdersBuys = new HashSet<PurchaseOrder>();
+        }
         public int CompanyId { get; set; }
         [Required]
         public bool CompanyType { get; set; }
@@ -32,12 +41,31 @@ namespace SolicitudesAPI.Models
         public string? PeakrContractDocPath { get; set; }
 
         //External
+        [ForeignKey("Address")]
         public int? AddressId { get; set; }
-        public Address? Address { get; set; }
+        //public string? UserRefId { get; set; }
+
+        //[ForeignKey("UserRefId")]
+        //public IdentityUser? User { get; set; }
+
+        public Address? Address { get; set; } = new Address();
         public List<Request> requests { get; set; }
-        public List<Quote> Quotes { get; set; }
+        [NotMapped]
+        public List<SelectListItem>? ProductCategories { get; set; }
 
-        public List<CompanyCategory> companyCategories { get; set; }
+        [NotMapped]
+        public List<int>? SelectedCategories { get; set; }
 
+        public virtual ICollection<CompanyCategory> Categories { get; set; }
+
+        public virtual ICollection<Quote> Quotes { get; private set; }
+
+        public virtual ICollection<Request> Requests { get; private set; }
+
+        [InverseProperty("CompanySeller")]
+        public ICollection<PurchaseOrder> PurchaseOrdersSells { get; private set; }
+
+        [InverseProperty("CompanyBuyer")]
+        public ICollection<PurchaseOrder> PurchaseOrdersBuys { get; private set; }
     }
 }

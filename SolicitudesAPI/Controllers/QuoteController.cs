@@ -59,7 +59,7 @@ namespace SolicitudesAPI.Controllers
             var company = quoteRequest.Request;
 
             context.Entry(city).Reference(x => x.Address).Load();
-            context.Entry(city).Reference(x => x.Companies).Load();
+            context.Entry(company).Reference(x => x.Company).Load();
 
             
             return mapper.Map<QuoteRequestDTO>(quoteRequest);
@@ -111,7 +111,7 @@ namespace SolicitudesAPI.Controllers
 
            
             context.Entry(request).Reference(x => x.Address).Load();
-            context.Entry(request).Reference(x => x.Companies).Load();
+            context.Entry(request).Reference(x => x.Company).Load();
 
            
             return mapper.Map<RequestModalDTO>(request);

@@ -15,8 +15,7 @@ namespace SolicitudesAPI.Utilidades
 
             CreateMap<Address, AddressDTO>().ReverseMap();
 
-            CreateMap<Category, CategoriesDTO>().ReverseMap()
-            .ForMember(categoriesDTO => categoriesDTO.companyCategories, opciones => opciones.MapFrom(MapRequestQuotesList));
+            CreateMap<Category, CategoriesDTO>().ReverseMap();
 
             CreateMap<Quote, QuoteDTO2>().ReverseMap();
             CreateMap<Request, RequestModalDTO>()
@@ -24,12 +23,12 @@ namespace SolicitudesAPI.Utilidades
                 .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department))
                 .ForMember(x => x.Line2, x => x.MapFrom(y => y.Address.Line2))
                 .ForMember(x => x.PostalCode, x => x.MapFrom(y => y.Address.PostalCode))
-                .ForMember(x => x.Name, x => x.MapFrom(y => y.Companies.Name))
-                .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Companies.LogoPath))
-                .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Companies.WebSiteUrl));
+                .ForMember(x => x.Name, x => x.MapFrom(y => y.Company.Name))
+                .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Company.LogoPath))
+                .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Company.WebSiteUrl));
 
             CreateMap<RequestCreationDTO, Request>()
-                .ForMember(request => request.requestCategories, opciones => opciones.MapFrom(MapRequestCategory));
+                .ForMember(request => request.Categories, opciones => opciones.MapFrom(MapRequestCategory));
 
             CreateMap<Quote, QuoteDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
@@ -44,14 +43,14 @@ namespace SolicitudesAPI.Utilidades
             CreateMap<QuoteRequest, QuoteRequestDTO>().ReverseMap();
 
             CreateMap<Request, RequestSellerDTO>()
-                .ForMember(x => x.CompanyName, x => x.MapFrom(y => y.Companies.Name))
-                .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Companies.LogoPath))
-                .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Companies.WebSiteUrl));
+                .ForMember(x => x.CompanyName, x => x.MapFrom(y => y.Company.Name))
+                .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Company.LogoPath))
+                .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Company.WebSiteUrl));
 
             CreateMap<Request, RequestBuyerDTO>().ReverseMap();
 
-            CreateMap<QuoteCreationDTO, Quote>()
-                .ForMember(quote => quote.QuoteRequests, opciones => opciones.MapFrom(MapQuoteRequest));
+            //CreateMap<QuoteCreationDTO, Quote>()
+            //    .ForMember(quote => quote.QuoteRequest, opciones => opciones.MapFrom(MapQuoteRequest));
 
             CreateMap<Request, RequestDetailDTO>()
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
@@ -85,16 +84,16 @@ namespace SolicitudesAPI.Utilidades
         private List<QuoteDTO> MapRequestQuotesList(Request request, RequestDetailDTO requestDetailDTO)
         {
             var res = new List<QuoteDTO>();
-            if (request.QuoteRequest == null) { return res; }
-            foreach (var requestQuote in request.QuoteRequest)
+            if (request.Quotes == null) { return res; }
+            foreach (var requestQuote in request.Quotes)
             {
                 res.Add(new QuoteDTO()
                 {
                     QuoteId = requestQuote.QuoteId,
-                    QuoteProductName = requestQuote.Quote.QuoteProductName,
-                    DeliveryDeadLineInDays = requestQuote.Quote.DeliveryDeadLineInDays,
-                    QuoteExpirationDate = requestQuote.Quote.QuoteExpirationDate,
-                    NetCost = requestQuote.Quote.NetCost
+                    QuoteProductName = requestQuote.QuoteProductName,
+                    DeliveryDeadLineInDays = requestQuote.DeliveryDeadLineInDays,
+                    QuoteExpirationDate = requestQuote.QuoteExpirationDate,
+                    NetCost = requestQuote.NetCost
 
                 });
             }
@@ -102,18 +101,20 @@ namespace SolicitudesAPI.Utilidades
             return res;
         }
 
-        private List<QuoteRequest> MapQuoteRequest(QuoteCreationDTO quoteCreationDTO, Quote quote)
-        {
-            var result = new List<QuoteRequest>();
+        //private List<QuoteRequest> MapQuoteRequest(QuoteCreationDTO quoteCreationDTO, Quote quote)
+        //{
 
-            if (quoteCreationDTO.RequestId == null)
-            {
-                return result;
-            }         
-                result.Add(new QuoteRequest() { RequestId = quoteCreationDTO.RequestId });
+        //    var result = new List<QuoteRequest>();
+
+        //    if (quoteCreationDTO.RequestId == null)
+        //    {
+        //        return result;
+        //    }         
+
+        //        result.Add(new QuoteRequest() { Request  });
             
-            return result;
-        }
+        //    return result;
+        //}
     }
 
     }

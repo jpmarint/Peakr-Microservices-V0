@@ -17,7 +17,7 @@ namespace SolicitudesAPI.Models
         [Required]
         public string Name { get; set; }
 
-        [Required]
-        public string cssStyleName { get; set; }
+        //[Required]
+        //public string cssStyleName { get; set; }
     }
 }
