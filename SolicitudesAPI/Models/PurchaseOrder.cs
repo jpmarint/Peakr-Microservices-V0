@@ -17,7 +17,7 @@ namespace SolicitudesAPI.Models
 
         [ForeignKey("QuoteRequest")]
         public int QuoteRequestId;
-        public virtual QuoteRequest QuoteRequest { get; set; } = null!;
+ 
 
         [ForeignKey("CompanySeller")]
         public int CompanySellerId;
