@@ -19,15 +19,15 @@ namespace SolicitudesAPI.DTOs.CompanyDTOs
         [Required]
         [PesoArchivoValidacion(PesoMaximoEnMegaBytes: 6)]
         [TipoArchivoValidacion(GrupoTipoArchivo.File)]
-        public IFormFile LegalExistenceDocPath { get; set; }
+        public IFormFile LegalExistenceDoc { get; set; }
         [Required]
         [PesoArchivoValidacion(PesoMaximoEnMegaBytes: 6)]
         [TipoArchivoValidacion(GrupoTipoArchivo.File)]
-        public IFormFile BankAccountDocPath { get; set; }
+        public IFormFile BankAccountDoc { get; set; }
         [Required]
         [PesoArchivoValidacion(PesoMaximoEnMegaBytes: 6)]
         [TipoArchivoValidacion(GrupoTipoArchivo.File)]
-        public IFormFile RutDocPath { get; set; }
+        public IFormFile RutDoc { get; set; }
 
         //public int AddressId { get; set; }
 

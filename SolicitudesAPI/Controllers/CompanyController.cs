@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
@@ -32,7 +31,7 @@ namespace SolicitudesAPI.Controllers
         /// </summary>
         /// <param name="companyCreationDTO"></param>
         /// <returns></returns>
-       
+
         [HttpPost("Register", Name = "RegisterCompany")]
         public async Task<IActionResult> RegisterCompany([FromForm] CompanyCreationDTO companyCreationDTO)
         {
@@ -63,44 +62,43 @@ namespace SolicitudesAPI.Controllers
 
             var company = mapper.Map<Company>(companyCreationDTO);
 
-            if (companyCreationDTO.LegalExistenceDocPath != null)
+            if (companyCreationDTO.LegalExistenceDoc != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await companyCreationDTO.LegalExistenceDocPath.CopyToAsync(memoryStream);
+                    await companyCreationDTO.LegalExistenceDoc.CopyToAsync(memoryStream);
                     var contenido = memoryStream.ToArray();
-                    var extension = Path.GetExtension(companyCreationDTO.LegalExistenceDocPath.FileName);
+                    var extension = Path.GetExtension(companyCreationDTO.LegalExistenceDoc.FileName);
                     var companyName = companyCreationDTO.Name;
-                    company.LegalExistenceDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
-                    companyCreationDTO.LegalExistenceDocPath.ContentType, companyName, LegalExistenceFileName);
+                    company.LegalExistenceDocPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, LegalExistenceFileName, companyCreationDTO.LegalExistenceDoc);
 
                 }
             }
 
-            if (companyCreationDTO.BankAccountDocPath != null)
+            if (companyCreationDTO.BankAccountDoc != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await companyCreationDTO.BankAccountDocPath.CopyToAsync(memoryStream);
+                    await companyCreationDTO.BankAccountDoc.CopyToAsync(memoryStream);
                     var contenido = memoryStream.ToArray();
                     var companyName = companyCreationDTO.Name;
-                    var extension = Path.GetExtension(companyCreationDTO.BankAccountDocPath.FileName);
-                    company.BankAccountDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
-                    companyCreationDTO.BankAccountDocPath.ContentType, companyName, BankAccountFileName);
+                    var extension = Path.GetExtension(companyCreationDTO.BankAccountDoc.FileName);
+                    company.BankAccountDocPath = await almacenadorArchivos
+                        .GuardarArchivoCompany(companyName, BankAccountFileName, companyCreationDTO.BankAccountDoc);
 
                 }
             }
 
-            if (companyCreationDTO.RutDocPath != null)
+            if (companyCreationDTO.RutDoc != null)
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await companyCreationDTO.RutDocPath.CopyToAsync(memoryStream);
+                    await companyCreationDTO.RutDoc.CopyToAsync(memoryStream);
                     var contenido = memoryStream.ToArray();
                     var companyName = companyCreationDTO.Name;
-                    var extension = Path.GetExtension(companyCreationDTO.RutDocPath.FileName);
-                    company.RutDocPath = await almacenadorArchivos.GuardarArchivoCompany(contenido, extension, contenedor,
-                    companyCreationDTO.RutDocPath.ContentType, companyName, RutFileName);
+                    var extension = Path.GetExtension(companyCreationDTO.RutDoc.FileName);
+                    company.RutDocPath = await almacenadorArchivos
+                        .GuardarArchivoCompany(companyName, RutFileName, companyCreationDTO.RutDoc);
 
                 }
             }
@@ -121,31 +119,33 @@ namespace SolicitudesAPI.Controllers
             }
 
             var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
-            
+
             var companyDetails = mapper.Map<CompanyDetailsDTO>(company);
 
             return Ok(companyDetails);
         }
 
 
-        [HttpGet("GetLogo")]
-        public async Task<IActionResult> GetLogo(int companyId)
-        {
+        //[HttpGet("GetLogo")]
+        //public async Task<IActionResult> GetLogo(int companyId)
+        //{
 
-            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-            if (!exist)
-            {
-                return NotFound("No existe esta compañía");
-            }
+        //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+        //    if (!exist)
+        //    {
+        //        return NotFound("No existe esta compañía");
+        //    }
 
-            var companyLogoPath = await context.Companies
-                .Where(x => x.CompanyId == companyId)
-                .Select(u => u.LogoPath)
-                .FirstOrDefaultAsync();
+        //    var companyLogoPath = await context.Companies
+        //        .Where(x => x.CompanyId == companyId)
+        //        .Select(u => u.LogoPath)
+        //        .FirstOrDefaultAsync();
 
-            return Ok(companyLogoPath);
+        //    companyLogoPath = almacenadorArchivos.GenerateSASTokenForFile(companyLogoPath);
 
-        }
+        //    return Ok(companyLogoPath);
+
+        //}
 
         [HttpGet("Address")]
         public async Task<IActionResult> GetCompanyAddress(int companyId)
@@ -190,21 +190,128 @@ namespace SolicitudesAPI.Controllers
         //}
 
 
-        //[HttpGet("Docs")]
-        //public async Task<IActionResult> GetCompanyFiles(int companyId)
-        //{
-        //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-        //    if (!exist)
-        //    {
-        //        return NotFound("No existe esta compañía");
-        //    }
+        [HttpGet("GetFiles")]
+        public async Task<IActionResult> GetCompanyFiles(int companyId)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
 
-        //    var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
+            var company = await context.Companies.FirstOrDefaultAsync(x => x.CompanyId == companyId);
 
-        //    var companyDocs = mapper.Map<CompanyDocsDTO>(company);
+            var companyDocs = mapper.Map<CompanyDocsDTO>(company);
 
-        //    return Ok(companyDocs);
-        //}
+            companyDocs.LogoPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.LogoPath);
+            companyDocs.ImagePath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.ImagePath);
+            companyDocs.RutDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.RutDocPath);
+            companyDocs.BankAccountDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.BankAccountDocPath);
+            companyDocs.LegalExistenceDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.LegalExistenceDocPath);
+            //companyDocs.PeakrContractDocPath = almacenadorArchivos.GenerateSASTokenForFile(companyDocs.PeakrContractDocPath);
+
+            //generar SASToken para cada archivo...
+
+            return Ok(companyDocs);
+        }
+
+        [HttpPut("UpdateFile")]
+        public async Task<IActionResult> UpdateCompanyFile([FromForm] int companyId,
+            string fileToUpdate, IFormFile file)
+        {
+
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+
+            if (file != null)
+            {
+                string newPath = string.Empty;
+                var companyRecord = await context.Companies
+                        .Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+
+                string companyName = companyRecord.Name;
+
+                fileToUpdate = fileToUpdate.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+                switch (fileToUpdate)
+                {
+                    case "logo":
+                        string companyLogo = await context.Companies
+                            .Where(x => x.CompanyId == companyId).Select(y => y.LogoPath).FirstOrDefaultAsync();
+                        if (companyLogo.EndsWith("Temp.png") || companyLogo.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+                        {
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        else
+                        {
+                            await almacenadorArchivos.BorrarArchivo(companyLogo, contenedor, companyName);
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        companyRecord.LogoPath = newPath;
+                        break;
+                    case "banner":
+                        string companyBanner = await context.Companies
+                            .Where(x => x.CompanyId == companyId).Select(y => y.ImagePath).FirstOrDefaultAsync();
+                        if (companyBanner.EndsWith("Temp.png") || companyBanner.StartsWith(@"https://peakrweb.blob.core.windows.net"))
+                        {
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        else
+                        {
+                            await almacenadorArchivos.BorrarArchivo(companyBanner, contenedor, companyName);
+                            newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+                        }
+                        companyRecord.ImagePath = newPath;
+                        break;
+
+                    case "rut":
+                        string companyRut = await context.Companies
+                        .Where(x => x.CompanyId == companyId).Select(y => y.RutDocPath).FirstOrDefaultAsync();
+                        await almacenadorArchivos.BorrarArchivo(companyRut, contenedor, companyName);
+                        newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, RutFileName, file);
+                        companyRecord.RutDocPath = newPath;
+                        break;
+
+                    case "exist":
+                        string companyExist = await context.Companies
+                        .Where(x => x.CompanyId == companyId).Select(y => y.LegalExistenceDocPath).FirstOrDefaultAsync();
+
+                        await almacenadorArchivos.BorrarArchivo(companyExist, contenedor, companyName);
+                        newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, LegalExistenceFileName, file);
+
+                        companyRecord.LegalExistenceDocPath = newPath;
+                        break;
+                    case "bank":
+                        string companyBank = await context.Companies
+                                                   .Where(x => x.CompanyId == companyId).Select(y => y.BankAccountDocPath).FirstOrDefaultAsync();
+
+                        await almacenadorArchivos.BorrarArchivo(companyBank, contenedor, companyName);
+                        newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, BankAccountFileName, file);
+                        
+                        companyRecord.BankAccountDocPath = newPath;
+                        break;
+
+                    default:
+
+                        return BadRequest("El archivo que deseas cambiar no existe");
+
+                }
+
+                context.Update(companyRecord);
+                context.SaveChanges();
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest("Debe subir un archivo");
+            }
+
+            return Ok();
+
+        }
 
 
         //[HttpPost("UpdateDetails")]
