@@ -1,6 +1,6 @@
 ﻿namespace SolicitudesAPI.DTOs.QuoteDTOs
 {
-    public class QuoteDTO2
+    public class QuoteReadOnlyDTO
     {
         public string QuoteProductName { get; set; }
         public int DeliveryDeadLineInDays { get; set; }

@@ -109,6 +109,12 @@ namespace SolicitudesAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Details Company
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+
         [HttpGet("Details")]
         public async Task<IActionResult> GetCompanyDetails(int companyId)
         {
@@ -147,24 +153,11 @@ namespace SolicitudesAPI.Controllers
 
         //}
 
-        [HttpGet("Address")]
-        public async Task<IActionResult> GetCompanyAddress(int companyId)
-        {
-            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-            if (!exist)
-            {
-                return NotFound("No existe esta compañía");
-            }
-
-            var companyAddressId = await context.Companies
-                .Where(x => x.CompanyId == companyId)
-                .Select(u => u.AddressId)
-                .FirstOrDefaultAsync();
-
-            var address = await context.Address
-                .Where(addressDB => addressDB.AddressId == companyAddressId).FirstOrDefaultAsync();
-            return Ok(mapper.Map<AddressDTO>(address));
-        }
+        /// <summary>
+        /// Details Address Company
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
 
         //[HttpGet("GetCategories")]
         //public async Task<ActionResult<CategoriesDTO>> GetCategories(int companyId)
@@ -189,7 +182,12 @@ namespace SolicitudesAPI.Controllers
 
         //}
 
-
+        /// <summary>
+        /// Get Files Company
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+        /// 
         [HttpGet("GetFiles")]
         public async Task<IActionResult> GetCompanyFiles(int companyId)
         {
@@ -214,6 +212,12 @@ namespace SolicitudesAPI.Controllers
 
             return Ok(companyDocs);
         }
+
+        /// <summary>
+        /// Update Files Company
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
 
         [HttpPut("UpdateFile")]
         public async Task<IActionResult> UpdateCompanyFile([FromForm] int companyId,
@@ -247,7 +251,6 @@ namespace SolicitudesAPI.Controllers
                         }
                         else
                         {
-                            await almacenadorArchivos.BorrarArchivo(companyLogo, contenedor, companyName);
                             newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
                         }
                         companyRecord.LogoPath = newPath;
@@ -261,7 +264,6 @@ namespace SolicitudesAPI.Controllers
                         }
                         else
                         {
-                            await almacenadorArchivos.BorrarArchivo(companyBanner, contenedor, companyName);
                             newPath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
                         }
                         companyRecord.ImagePath = newPath;
@@ -270,7 +272,6 @@ namespace SolicitudesAPI.Controllers
                     case "rut":
                         string companyRut = await context.Companies
                         .Where(x => x.CompanyId == companyId).Select(y => y.RutDocPath).FirstOrDefaultAsync();
-                        await almacenadorArchivos.BorrarArchivo(companyRut, contenedor, companyName);
                         newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, RutFileName, file);
                         companyRecord.RutDocPath = newPath;
                         break;
@@ -279,16 +280,13 @@ namespace SolicitudesAPI.Controllers
                         string companyExist = await context.Companies
                         .Where(x => x.CompanyId == companyId).Select(y => y.LegalExistenceDocPath).FirstOrDefaultAsync();
 
-                        await almacenadorArchivos.BorrarArchivo(companyExist, contenedor, companyName);
                         newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, LegalExistenceFileName, file);
 
                         companyRecord.LegalExistenceDocPath = newPath;
                         break;
                     case "bank":
                         string companyBank = await context.Companies
-                                                   .Where(x => x.CompanyId == companyId).Select(y => y.BankAccountDocPath).FirstOrDefaultAsync();
-
-                        await almacenadorArchivos.BorrarArchivo(companyBank, contenedor, companyName);
+                        .Where(x => x.CompanyId == companyId).Select(y => y.BankAccountDocPath).FirstOrDefaultAsync();
                         newPath = await almacenadorArchivos.GuardarArchivoCompany(companyName, BankAccountFileName, file);
                         
                         companyRecord.BankAccountDocPath = newPath;
@@ -313,7 +311,12 @@ namespace SolicitudesAPI.Controllers
 
         }
 
-
+        /// <summary>
+        /// Update Address Company
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+        /// 
         [HttpPut("UpdateAddress")]
         public async Task<IActionResult> UpdateCompanyAddress(AddressDTO companyAddress, int companyId)
         {
@@ -343,6 +346,12 @@ namespace SolicitudesAPI.Controllers
 
             return Ok("Los detalles de la compañía se actualizaron.");
         }
+
+        /// <summary>
+        /// Update Details Company
+        /// </summary>
+        /// <param name="CompanyDetailsDTO"></param>
+        /// <returns></returns>
 
         [HttpPut("UpdateDetails")]
         public async Task<IActionResult> UpdateCompanyDetails(CompanyDetailsDTO companyDetails)

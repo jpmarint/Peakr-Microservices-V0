@@ -26,39 +26,19 @@ namespace SolicitudesAPI.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-        [HttpGet("GetAddress")]
-        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
-        {
-
-            var address = await context.Address
-                .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
-
-            return mapper.Map<AddressDTO>(address);
-
-        }
+        /// <summary>
+        /// Get New Request
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <returns></returns>
 
         [HttpGet("NewRequest", Name = "NewRequest")]
-        public async Task<IActionResult> NewRequest(string search, int companyId)
+        public async Task<IActionResult> NewRequest(string search)
         {
-
-            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-            if (!exist)
-            {
-                return NotFound("No existe esta compañía");
-            }
-
-            var companyAddressId = await context.Companies
-                .Where(x => x.CompanyId == companyId)
-                .Select(u => u.AddressId)
-                .FirstOrDefaultAsync();
-
-            var address = await context.Address
-                .Where(addressDB => addressDB.AddressId == companyAddressId).FirstOrDefaultAsync();
-
             RequestSearchDTO requestSearchDTO = new RequestSearchDTO
             {
                 QuerySearch = search,
-                RequestDate = DateTime.Now,
+                RequestDate = DateTime.Now
             };
 
             return Ok(requestSearchDTO);
@@ -66,13 +46,12 @@ namespace SolicitudesAPI.Controllers
         }
 
         /// <summary>
-        /// Register a new request
+        /// Create a new request
         /// </summary>
-        // <param name="requestCreationDTO"></param>
+        /// <param name="requestCreationDTO"></param>
         /// <returns></returns>
-        /// 
 
-        [HttpPost("PostRequest",Name = "PostRequest")]
+        [HttpPost("CreateRequest",Name = "CreateRequest")]
         public async Task<IActionResult> Post(RequestCreationDTO requestCreationDTO)
         {
 
@@ -99,11 +78,11 @@ namespace SolicitudesAPI.Controllers
         /// <summary>
         /// Request Details as seller
         /// </summary>
-        // <param name="requestId"></param>
+        /// <param name="requestId"></param>
         /// <returns></returns>
 
-        [HttpGet("RequestDetail", Name = "RequestDetailasSeller")]
-        public async Task<ActionResult<RequestDetailDTO>> GetDetail(int requestId)
+        [HttpGet("RequestDetailAsSeller", Name = "RequestDetailasSeller")]
+        public async Task<ActionResult<RequestDetailSellerDTO>> GetDetailSeller(int requestId)
         {
 
             var noexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
@@ -119,9 +98,40 @@ namespace SolicitudesAPI.Controllers
             context.Entry(request).Reference(x => x.Address).Load();
             
 
-            return mapper.Map<RequestDetailDTO>(request);
+            return mapper.Map<RequestDetailSellerDTO>(request);
         }
 
+        /// <summary>
+        /// Request Details as Buyer
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+
+        [HttpGet("RequestDetailAsBuyer", Name = "RequestDetailAsBuyer")]
+        public async Task<ActionResult<RequestDetailBuyerDTO>> GetDetailBuyer(int requestId)
+        {
+
+            var noexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
+
+            if (!noexiste)
+            {
+                return NotFound("No existe esa solicitud");
+            }
+
+            var request = await context.Requests.Include(requestDB => requestDB.Quotes)
+                .FirstOrDefaultAsync(x => x.RequestId == requestId);
+
+            context.Entry(request).Reference(x => x.Address).Load();
+
+
+            return mapper.Map<RequestDetailBuyerDTO>(request);
+        }
+
+        /// <summary>
+        /// Get All Requests As Seller
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <returns></returns>
 
         [HttpGet("AllRequestsAsSeller", Name = "AllRequestsAsSeller")]
         public async Task<ActionResult<List<RequestSellerDTO>>> GetAllRequestsAsSeller(int companyId)
@@ -139,11 +149,11 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<List<RequestSellerDTO>>(request);
         }
 
-        ///// <summary>
-        ///// requests approved and purchase order placed
-        ///// </summary>
-        //// <param name="companyId"></param>
-        ///// <returns></returns>
+        /// <summary>
+        /// Get All Requests As Buyer
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <returns></returns>
 
         [HttpGet("AllRequestsAsBuyer", Name = "AllRequestsAsBuyer")]
         public async Task<ActionResult<List<RequestBuyerDTO>>> GetAllRequestsAsBuyer(int companyId)

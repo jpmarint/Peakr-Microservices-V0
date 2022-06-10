@@ -15,39 +15,10 @@ namespace SolicitudesAPI.Servicios
             _connectionString = configuration.GetConnectionString("AzureStorage");
         }
 
-        public async Task BorrarArchivo(string ruta, string contenedor, string companyName)
-        {
-
-            var fileNamewExt = string.Empty;
-
-            if (string.IsNullOrEmpty(ruta))
-            {
-                return;
-            }
-
-            try
-            {
-                companyName = companyName.Trim().Replace(" ", String.Empty).ToLowerInvariant();
-                string connectionString = _connectionString;
-                BlobContainerClient container = new BlobContainerClient(connectionString, documentos);
-                fileNamewExt = string.Format($"{ruta}");
-                BlobClient blobcli = container.GetBlobClient(fileNamewExt);
-                await blobcli.DeleteIfExistsAsync();
-
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-
-        }
-
-
         public async Task<string> EditarArchivo(string companyName, string fileName, IFormFile file)
         {
             var ruta = string.Format($"{companyName}/{fileName}{Path.GetExtension(file.FileName)}");
 
-            await BorrarArchivo(ruta, documentos, companyName);
             return await GuardarArchivoCompany(companyName, fileName, file);
         }
 

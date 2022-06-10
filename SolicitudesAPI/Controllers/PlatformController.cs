@@ -22,6 +22,14 @@ namespace SolicitudesAPI.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
+
+        /// <summary>
+        /// Upload File
+        /// </summary>
+        /// <param name="companyId"></param>
+        /// /// <param name="file"></param>
+        /// <returns></returns>
+
         [HttpPost("UploadFile")]
         public async Task<IActionResult> UploadFile(IFormFile file, int companyId)
         {
@@ -34,15 +42,38 @@ namespace SolicitudesAPI.Controllers
 
         }
 
-        [HttpDelete("DeleteFile")]
-        public async Task<IActionResult> DeleteFile(string filePath, int companyId)
+        [HttpGet("GetAddress")]
+        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
         {
-            var companyName = await context.Companies
-                        .Where(companyDB => companyDB.CompanyId == companyId)
-                       .Select(x => x.Name).FirstOrDefaultAsync();
-            await almacenadorArchivos.BorrarArchivo(filePath, contenedor, companyName);
+            var exist = await context.Address.AnyAsync(x => x.AddressId == addressId);
+            if (!exist)
+            {
+                return NotFound("No existe esta dirección");
+            }
 
-            return Ok("Archivo borrado");
+            var address = await context.Address
+                .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
+
+            return mapper.Map<AddressDTO>(address);
+
         }
+
+        [HttpPost("CreateAddress")]
+        public async Task<IActionResult> CreateAddress(AddressDTO newAddress)
+        {          
+            var address = new Address();
+
+            address.Line1 = newAddress.Line1;
+            address.Line2 = newAddress.Line2;
+            address.PostalCode = newAddress.PostalCode;
+            address.Department = newAddress.Department;
+            address.City = newAddress.City;
+            address.Notes = newAddress.Notes;
+
+            context.Address.Add(address);
+            context.SaveChanges();
+            return Ok(address.AddressId);
+        }
+
     }
 }

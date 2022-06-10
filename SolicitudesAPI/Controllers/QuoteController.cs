@@ -29,6 +29,7 @@ namespace SolicitudesAPI.Controllers
         /// <param name="requestId"></param>
         /// <returns></returns>
         /// 
+
        
         [HttpGet("QuoteDetails", Name = "Request&QuoteReadSellerModal")]
             public async Task<ActionResult<QuoteRequestDTO>> Get(int quoteId, int requestId)
