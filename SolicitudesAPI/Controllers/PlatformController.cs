@@ -13,7 +13,8 @@ namespace SolicitudesAPI.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
-        private readonly IAlmacenadorArchivos almacenadorArchivos; 
+        private readonly IAlmacenadorArchivos almacenadorArchivos;
+        private readonly string contenedor = "documentos";
         public PlatformController(ApplicationDbContext context, IMapper mapper, IAlmacenadorArchivos almacenadorArchivos)
         {
             this.context = context;
@@ -31,6 +32,17 @@ namespace SolicitudesAPI.Controllers
 
             return Ok(filePath);
 
-        }        
+        }
+
+        [HttpDelete("DeleteFile")]
+        public async Task<IActionResult> DeleteFile(string filePath, int companyId)
+        {
+            var companyName = await context.Companies
+                        .Where(companyDB => companyDB.CompanyId == companyId)
+                       .Select(x => x.Name).FirstOrDefaultAsync();
+            await almacenadorArchivos.BorrarArchivo(filePath, contenedor, companyName);
+
+            return Ok("Archivo borrado");
+        }
     }
 }
