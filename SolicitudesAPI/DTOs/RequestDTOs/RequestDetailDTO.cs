@@ -10,6 +10,7 @@ namespace SolicitudesAPI.DTOs.RequestDTOs
         public DateTime? RequestDate { get; set; }
         public int? Quantity { get; set; }
         public string City { get; set; }
+        public string Department { get; set; }
         public string PaymentConditions { get; set; }
         public string ProductNeeds { get; set; }
         public List<QuoteDTO> Quotes { get; set; }

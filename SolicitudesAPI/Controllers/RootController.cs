@@ -9,7 +9,13 @@ namespace SolicitudesAPI.Controllers
     [Route("api")]
     public class RootController : ControllerBase
     {
-     
+
+        /// <summary>
+        /// Get Routes API
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// <returns></returns>
+
         [HttpGet(Name = "ObtenerRoot")]
         public ActionResult<IEnumerable<DatoHATEOAS>> Get()
         {

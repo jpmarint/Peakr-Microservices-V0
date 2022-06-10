@@ -24,8 +24,7 @@ namespace SolicitudesAPI.Utilidades
                 .ForMember(x => x.Line2, x => x.MapFrom(y => y.Address.Line2))
                 .ForMember(x => x.PostalCode, x => x.MapFrom(y => y.Address.PostalCode))
                 .ForMember(x => x.Name, x => x.MapFrom(y => y.Company.Name))
-                .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Company.LogoPath))
-                .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Company.WebSiteUrl));
+                .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Company.LogoPath));
 
             CreateMap<RequestCreationDTO, Request>()
                 .ForMember(request => request.Categories, opciones => opciones.MapFrom(MapRequestCategory));
@@ -54,6 +53,7 @@ namespace SolicitudesAPI.Utilidades
 
             CreateMap<Request, RequestDetailDTO>()
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
+                .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department))
                 .ForMember(requestDetailDTO => requestDetailDTO.Quotes, opciones => opciones.MapFrom(MapRequestQuotesList));
         }
 
