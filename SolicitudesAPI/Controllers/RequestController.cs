@@ -82,7 +82,7 @@ namespace SolicitudesAPI.Controllers
         /// <returns></returns>
 
         [HttpGet("RequestDetailAsSeller", Name = "RequestDetailasSeller")]
-        public async Task<ActionResult<RequestDetailDTO>> GetDetail(int requestId)
+        public async Task<ActionResult<RequestDetailSellerDTO>> GetDetailSeller(int requestId)
         {
 
             var noexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
@@ -98,7 +98,33 @@ namespace SolicitudesAPI.Controllers
             context.Entry(request).Reference(x => x.Address).Load();
             
 
-            return mapper.Map<RequestDetailDTO>(request);
+            return mapper.Map<RequestDetailSellerDTO>(request);
+        }
+
+        /// <summary>
+        /// Request Details as Buyer
+        /// </summary>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
+
+        [HttpGet("RequestDetailAsBuyer", Name = "RequestDetailAsBuyer")]
+        public async Task<ActionResult<RequestDetailBuyerDTO>> GetDetailBuyer(int requestId)
+        {
+
+            var noexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
+
+            if (!noexiste)
+            {
+                return NotFound("No existe esa solicitud");
+            }
+
+            var request = await context.Requests.Include(requestDB => requestDB.Quotes)
+                .FirstOrDefaultAsync(x => x.RequestId == requestId);
+
+            context.Entry(request).Reference(x => x.Address).Load();
+
+
+            return mapper.Map<RequestDetailBuyerDTO>(request);
         }
 
         /// <summary>

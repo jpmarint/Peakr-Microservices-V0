@@ -17,5 +17,6 @@
         public string LogoPath { get; set; }
         public string ProductNeeds { get; set; }
         public string deliveryInstructions { get; set; }
+        public string FilePath { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace SolicitudesAPI.Utilidades
 
             CreateMap<Category, CategoriesDTO>().ReverseMap();
 
-            CreateMap<Quote, QuoteDTO2>().ReverseMap();
+            CreateMap<Quote, QuoteReadOnlyDTO>().ReverseMap();
             CreateMap<Request, RequestModalDTO>()
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
                 .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department))
@@ -29,7 +29,7 @@ namespace SolicitudesAPI.Utilidades
             CreateMap<RequestCreationDTO, Request>()
                 .ForMember(request => request.Categories, opciones => opciones.MapFrom(MapRequestCategory));
 
-            CreateMap<Quote, QuoteDTO>().ReverseMap();
+            CreateMap<Quote, QuoteSellerDTO>().ReverseMap();
             CreateMap<Company, CompanyDTO>().ReverseMap();
             CreateMap<Company, CompanyDetailsDTO>().ReverseMap();
             CreateMap<Company, CompanyDocsDTO>().ReverseMap();
@@ -51,7 +51,7 @@ namespace SolicitudesAPI.Utilidades
             //CreateMap<QuoteCreationDTO, Quote>()
             //    .ForMember(quote => quote.QuoteRequest, opciones => opciones.MapFrom(MapQuoteRequest));
 
-            CreateMap<Request, RequestDetailDTO>()
+            CreateMap<Request, RequestDetailSellerDTO>()
                 .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
                 .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department))
                 .ForMember(requestDetailDTO => requestDetailDTO.Quotes, opciones => opciones.MapFrom(MapRequestQuotesList));
@@ -81,13 +81,13 @@ namespace SolicitudesAPI.Utilidades
 
 
 
-        private List<QuoteDTO> MapRequestQuotesList(Request request, RequestDetailDTO requestDetailDTO)
+        private List<QuoteSellerDTO> MapRequestQuotesList(Request request, RequestDetailSellerDTO requestDetailDTO)
         {
-            var res = new List<QuoteDTO>();
+            var res = new List<QuoteSellerDTO>();
             if (request.Quotes == null) { return res; }
             foreach (var requestQuote in request.Quotes)
             {
-                res.Add(new QuoteDTO()
+                res.Add(new QuoteSellerDTO()
                 {
                     QuoteId = requestQuote.QuoteId,
                     QuoteProductName = requestQuote.QuoteProductName,
