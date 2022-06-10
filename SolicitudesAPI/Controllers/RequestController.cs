@@ -26,16 +26,16 @@ namespace SolicitudesAPI.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-        //[HttpGet("GetAddress")]
-        //public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
-        //{
+        [HttpGet("GetAddress")]
+        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
+        {
 
-        //    var address = await context.Address
-        //        .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
+            var address = await context.Address
+                .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
 
-        //    return mapper.Map<AddressDTO>(address);
+            return mapper.Map<AddressDTO>(address);
 
-        //}
+        }
 
         [HttpGet("NewRequest", Name = "NewRequest")]
         public async Task<IActionResult> NewRequest(string search, int companyId)
@@ -59,12 +59,6 @@ namespace SolicitudesAPI.Controllers
             {
                 QuerySearch = search,
                 RequestDate = DateTime.Now,
-                Department = address.Department,
-                City =  address.City,
-                Line1 = address.Line1,
-                Line2 = address.Line2,
-                PostalCode = address.PostalCode,               
-                Notes = address.Notes
             };
 
             return Ok(requestSearchDTO);

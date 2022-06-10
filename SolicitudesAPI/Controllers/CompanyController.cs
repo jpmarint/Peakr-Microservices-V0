@@ -301,7 +301,7 @@ namespace SolicitudesAPI.Controllers
                 }
 
                 context.Update(companyRecord);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
                 return NoContent();
             }
             else
@@ -314,19 +314,61 @@ namespace SolicitudesAPI.Controllers
         }
 
 
-        //[HttpPost("UpdateDetails")]
-        //public async Task<IActionResult> UpdateCompanyDetails(CompanyDetailsDTO companyDetails)
-        //{
-        //    var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyDetails.CompanyId);
-        //    if (!exist)
-        //    {
-        //        return NotFound("No existe esta compañía");
-        //    }
+        [HttpPut("UpdateAddress")]
+        public async Task<IActionResult> UpdateCompanyAddress(AddressDTO companyAddress, int companyId)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var companyRecord = await context.Companies
+                       .Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+            
+            var address = new Address();
+
+            address.Line1 = companyAddress.Line1;
+            address.Line2 = companyAddress.Line2;
+            address.PostalCode = companyAddress.PostalCode;
+            address.Department = companyAddress.Department;
+            address.City = companyAddress.City;
+            address.Notes = companyAddress.Notes;
+
+            context.Address.Add(address);
+            context.SaveChanges();
+            companyRecord.AddressId = address.AddressId;
+            context.SaveChanges();
 
 
+            return Ok("Los detalles de la compañía se actualizaron.");
+        }
 
-        //    return Ok("Los detalles de la compañía se actualizaron.");
-        //}
+        [HttpPut("UpdateDetails")]
+        public async Task<IActionResult> UpdateCompanyDetails(CompanyDetailsDTO companyDetails)
+        {
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyDetails.CompanyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var companyRecord = await context.Companies
+                       .Where(x => x.CompanyId == companyDetails.CompanyId).FirstOrDefaultAsync();
+
+            companyRecord.Name = companyDetails.Name;
+            companyRecord.Description = companyDetails.Description;
+            companyRecord.EstablishedSince = companyDetails.EstablishedSince;
+            companyRecord.NIT = companyDetails.NIT;
+            companyRecord.WebSiteUrl = companyDetails.WebSiteUrl;
+            companyRecord.TotalEmployees = companyDetails.TotalEmployees;
+            companyRecord.YearlySalesVolume = companyDetails.YearlySalesVolume;
+
+            context.Update(companyRecord);
+            await context.SaveChangesAsync();
+
+            return Ok("Los detalles de la compañía se actualizaron.");
+        }
 
 
     }
