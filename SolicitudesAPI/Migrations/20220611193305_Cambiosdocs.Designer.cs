@@ -12,8 +12,8 @@ using SolicitudesAPI;
 namespace SolicitudesAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220609232715_Initial")]
-    partial class Initial
+    [Migration("20220611193305_Cambiosdocs")]
+    partial class Cambiosdocs
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -91,7 +91,10 @@ namespace SolicitudesAPI.Migrations
                     b.Property<int?>("AddressId")
                         .HasColumnType("int");
 
-                    b.Property<string>("BankAccountDocPath")
+                    b.Property<string>("BankAccountDocGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BankAccountDocKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("CompanyType")
@@ -107,13 +110,22 @@ namespace SolicitudesAPI.Migrations
                     b.Property<DateTime?>("EstablishedSince")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ImagePath")
+                    b.Property<string>("ImageGuid")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LegalExistenceDocPath")
+                    b.Property<string>("ImageKey")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LogoPath")
+                    b.Property<string>("LegalExistenceDocGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LegalExistenceDocKey")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NIT")
@@ -127,7 +139,10 @@ namespace SolicitudesAPI.Migrations
                     b.Property<string>("PeakrContractDocPath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RutDocPath")
+                    b.Property<string>("RutDocGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RutDocKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TotalEmployees")
@@ -140,8 +155,6 @@ namespace SolicitudesAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CompanyId");
-
-                    b.HasIndex("AddressId");
 
                     b.ToTable("Companies");
                 });
@@ -270,7 +283,10 @@ namespace SolicitudesAPI.Migrations
                     b.Property<int>("DeliveryDeadLineInDays")
                         .HasColumnType("int");
 
-                    b.Property<string>("FilePath")
+                    b.Property<string>("FileGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("IVA")
@@ -351,27 +367,11 @@ namespace SolicitudesAPI.Migrations
                     b.Property<bool>("IsPurchaseOrder")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("PurchaseOrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuoteRequestId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkflowStatusId")
-                        .HasColumnType("int");
-
                     b.HasKey("QuoteId", "RequestId");
-
-                    b.HasIndex("PurchaseOrderId");
-
-                    b.HasIndex("QuoteId")
-                        .IsUnique();
 
                     b.HasIndex("RequestId");
 
-                    b.HasIndex("WorkflowStatusId");
-
-                    b.ToTable("QuoteRequest");
+                    b.ToTable("QuoteRequests");
                 });
 
             modelBuilder.Entity("SolicitudesAPI.Models.Request", b =>
@@ -391,7 +391,10 @@ namespace SolicitudesAPI.Migrations
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FilePath")
+                    b.Property<string>("FileGuid")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileKey")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsExactProduct")
@@ -473,16 +476,6 @@ namespace SolicitudesAPI.Migrations
                     b.ToTable("WorkflowStatus");
                 });
 
-            modelBuilder.Entity("SolicitudesAPI.Models.Company", b =>
-                {
-                    b.HasOne("SolicitudesAPI.Models.Address", "Address")
-                        .WithMany()
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Address");
-                });
-
             modelBuilder.Entity("SolicitudesAPI.Models.CompanyCategory", b =>
                 {
                     b.HasOne("SolicitudesAPI.Models.Category", "Category")
@@ -542,14 +535,9 @@ namespace SolicitudesAPI.Migrations
 
             modelBuilder.Entity("SolicitudesAPI.Models.QuoteRequest", b =>
                 {
-                    b.HasOne("SolicitudesAPI.Models.PurchaseOrder", "PurchaseOrder")
-                        .WithMany()
-                        .HasForeignKey("PurchaseOrderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("SolicitudesAPI.Models.Quote", "Quote")
-                        .WithOne("QuoteRequest")
-                        .HasForeignKey("SolicitudesAPI.Models.QuoteRequest", "QuoteId")
+                        .WithMany("QuoteRequest")
+                        .HasForeignKey("QuoteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -559,17 +547,7 @@ namespace SolicitudesAPI.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SolicitudesAPI.Models.WorkflowStatus", "QuoteRequestStatus")
-                        .WithMany()
-                        .HasForeignKey("WorkflowStatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("PurchaseOrder");
-
                     b.Navigation("Quote");
-
-                    b.Navigation("QuoteRequestStatus");
 
                     b.Navigation("Request");
                 });

@@ -11,7 +11,7 @@ namespace SolicitudesAPI.Controllers
 {
 
     [ApiController]
-    [Route("api/company/request")]
+    [Route("api/request")]
     public class RequestController : ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -32,7 +32,7 @@ namespace SolicitudesAPI.Controllers
         /// <param name="addressId"></param>
         /// <returns></returns>
 
-        [HttpGet("NewRequest", Name = "NewRequest")]
+        [HttpGet("GetNewRequest", Name = "NewRequest")]
         public async Task<IActionResult> NewRequest(string search)
         {
             RequestSearchDTO requestSearchDTO = new RequestSearchDTO
@@ -76,15 +76,14 @@ namespace SolicitudesAPI.Controllers
         }
 
         /// <summary>
-        /// Request Details as seller
+        /// Request Details
         /// </summary>
         /// <param name="requestId"></param>
         /// <returns></returns>
 
-        [HttpGet("RequestDetailAsSeller", Name = "RequestDetailasSeller")]
-        public async Task<ActionResult<RequestDetailSellerDTO>> GetDetailSeller(int requestId)
+        [HttpGet("GetRequestDetails", Name = "RequestDetails")]
+        public async Task<IActionResult> GetDetails(int requestId)
         {
-
             var noexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
 
             if (!noexiste)
@@ -92,49 +91,43 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("No existe esa solicitud");
             }
 
-            var request = await context.Requests.Include(requestDB => requestDB.Quotes)
+            var company = await context.Requests
+                .Include(requestDB => requestDB.Company).Select(y => y.CompanyId).FirstOrDefaultAsync();
+
+            if (context.Companies.Where(x => x.CompanyId == company)
+               .Select(x => x.CompanyType).FirstOrDefault())
+            {
+
+                var requestSeller = await context.Requests.Include(requestDB => requestDB.Quotes)
+                    .FirstOrDefaultAsync(x => x.RequestId == requestId);
+
+                context.Entry(requestSeller).Reference(x => x.Address).Load();
+
+
+                return Ok(mapper.Map<RequestDetailSellerDTO>(requestSeller));
+            }
+            else
+            {
+                var requestBuyer = await context.Requests.Include(requestDB => requestDB.Quotes)
                 .FirstOrDefaultAsync(x => x.RequestId == requestId);
 
-            context.Entry(request).Reference(x => x.Address).Load();
+                context.Entry(requestBuyer).Reference(x => x.Address).Load();
+
+
+                return Ok(mapper.Map<RequestDetailBuyerDTO>(requestBuyer));
+            }
+
             
-
-            return mapper.Map<RequestDetailSellerDTO>(request);
         }
 
         /// <summary>
-        /// Request Details as Buyer
+        /// Get All Requests
         /// </summary>
-        /// <param name="requestId"></param>
+        /// <param name="companyId"></param>
         /// <returns></returns>
 
-        [HttpGet("RequestDetailAsBuyer", Name = "RequestDetailAsBuyer")]
-        public async Task<ActionResult<RequestDetailBuyerDTO>> GetDetailBuyer(int requestId)
-        {
-
-            var noexiste = await context.Requests.AnyAsync(x => x.RequestId == requestId);
-
-            if (!noexiste)
-            {
-                return NotFound("No existe esa solicitud");
-            }
-
-            var request = await context.Requests.Include(requestDB => requestDB.Quotes)
-                .FirstOrDefaultAsync(x => x.RequestId == requestId);
-
-            context.Entry(request).Reference(x => x.Address).Load();
-
-
-            return mapper.Map<RequestDetailBuyerDTO>(request);
-        }
-
-        /// <summary>
-        /// Get All Requests As Seller
-        /// </summary>
-        /// <param name="addressId"></param>
-        /// <returns></returns>
-
-        [HttpGet("AllRequestsAsSeller", Name = "AllRequestsAsSeller")]
-        public async Task<ActionResult<List<RequestSellerDTO>>> GetAllRequestsAsSeller(int companyId)
+        [HttpGet("GetAllRequests", Name = "AllRequests")]
+        public async Task<IActionResult> GetAllRequests(int companyId)
         {
             var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
 
@@ -143,43 +136,34 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("La compañia no existe en el sistema");
             }
 
-            var request = await context.Requests.Include(x => x.Company)
-                .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
 
-            return mapper.Map<List<RequestSellerDTO>>(request);
-        }
-
-        /// <summary>
-        /// Get All Requests As Buyer
-        /// </summary>
-        /// <param name="addressId"></param>
-        /// <returns></returns>
-
-        [HttpGet("AllRequestsAsBuyer", Name = "AllRequestsAsBuyer")]
-        public async Task<ActionResult<List<RequestBuyerDTO>>> GetAllRequestsAsBuyer(int companyId)
-        {
-            var existe = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-
-            if (!existe)
+            if (context.Companies.Where(x => x.CompanyId == companyId)
+                .Select(x => x.CompanyType).FirstOrDefault())
             {
-                return NotFound("La compañia no existe en el sistema");
+
+                var request = await context.Requests.ToListAsync();
+
+                return Ok(mapper.Map<List<RequestSellerDTO>>(request));
             }
-
-            var requests = await context.Requests.Include(x => x.Company)
-                .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
-
-            var result = mapper.Map<List<RequestBuyerDTO>>(requests);
-
-            int qty = 0;
-
-            foreach (var req in result)
+            else
             {
-                qty = await context.QuoteRequest.Where(x => x.RequestId == req.RequestId).CountAsync();
-                req.QuotesQty = qty;
-                qty = 0;
-            }
+                var requests = await context.Requests.Include(x => x.Company)
+               .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
 
-            return Ok(result);
+                var result = mapper.Map<List<RequestBuyerDTO>>(requests);
+
+                int qty = 0;
+
+                foreach (var req in result)
+                {
+                    qty = await context.QuoteRequests.Where(x => x.RequestId == req.RequestId).CountAsync();
+                    req.QuotesQty = qty;
+                    qty = 0;
+                }
+
+                return Ok(result);
+            }
+               
         }
 
 

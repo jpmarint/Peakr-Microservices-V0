@@ -16,7 +16,8 @@ namespace SolicitudesAPI.Models
         [Required]
         public int DeliveryDeadLineInDays { get; set; }
 
-        public string? FilePath { get; set; } = string.Empty;
+        public string? FileGuid { get; set; } = string.Empty;
+        public string? FileKey { get; set; } = string.Empty;
 
         [Required]
         public DateTime QuoteExpirationDate { get; set; }
@@ -79,6 +80,6 @@ namespace SolicitudesAPI.Models
         public int RequestId;
         public virtual Request Request { get; set; }
 
-        public QuoteRequest QuoteRequest { get; set; }
+        public List<QuoteRequest> QuoteRequest { get; set; }
     }
 }

@@ -15,7 +15,8 @@
         public string NotesToClient { get; set; }
         public int CompanyId { get; set; }
         public int RequestId { get; set; }
-        public string FilePath { get; set; }
+
+        //public string FilePath { get; set; }
 
     }
 }

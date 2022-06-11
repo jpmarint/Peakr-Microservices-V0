@@ -38,7 +38,7 @@ namespace SolicitudesAPI
         public DbSet<WorkflowStatus> WorkflowStatus { get; set; }
         public DbSet<ContactUs> ContactUs { get; set; }
 
-        public DbSet<QuoteRequest> QuoteRequest { get; set; }
+        public DbSet<QuoteRequest> QuoteRequests { get; set; }
 
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
         public DbSet<CompanyCategory> CompanyCategories { get; set; }

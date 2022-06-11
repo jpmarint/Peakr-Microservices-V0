@@ -43,8 +43,8 @@ namespace SolicitudesAPI.Models
 
         public int? ChosenQuote { get; set; }
 
-        public string? FilePath { get; set; } = string.Empty;
-
+        public string? FileGuid { get; set; } = string.Empty;
+        public string? FileKey { get; set; } = string.Empty;
 
         [NotMapped]
         public List<SelectListItem> ProductCategories { get; set; }
