@@ -51,7 +51,7 @@ namespace SolicitudesAPI.Controllers
         /// <param name="requestCreationDTO"></param>
         /// <returns></returns>
 
-        [HttpPost("CreateRequest",Name = "CreateRequest")]
+        [HttpPost("CreateRequest", Name = "CreateRequest")]
         public async Task<IActionResult> Post(RequestCreationDTO requestCreationDTO)
         {
 
@@ -72,7 +72,7 @@ namespace SolicitudesAPI.Controllers
             var request = mapper.Map<Request>(requestCreationDTO);
             context.Add(request);
             await context.SaveChangesAsync();
-            return Ok(request);
+            return Ok(request.RequestId);
         }
 
         /// <summary>
