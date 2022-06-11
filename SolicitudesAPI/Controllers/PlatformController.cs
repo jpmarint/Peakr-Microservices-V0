@@ -22,6 +22,36 @@ namespace SolicitudesAPI.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
+        /// <summary>
+        /// Update Address
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPut("UpdateAddress")]
+        public async Task<IActionResult> UpdateCompanyAddress(int addressId, AddressDTO addressDTO)
+        {
+            var exist = await context.Address.AnyAsync(x => x.AddressId == addressId);
+            if (!exist)
+            {
+                return NotFound("No existe esta dirección");
+            }
+
+            var addressRecord = await context.Address.FirstOrDefaultAsync(x => x.AddressId == addressId);
+
+            addressRecord.Line1 = addressDTO.Line1;
+            addressRecord.Line2 = addressDTO.Line2;
+            addressRecord.PostalCode = addressDTO.PostalCode;
+            addressRecord.Department = addressDTO.Department;
+            addressRecord.City = addressDTO.City;
+            addressRecord.Notes = addressDTO.Notes;
+
+            context.Update(addressRecord);
+            await context.SaveChangesAsync();
+
+            return Ok("Se actualizó la dirección");
+        }
+
 
         /// <summary>
         /// Upload File
@@ -39,11 +69,134 @@ namespace SolicitudesAPI.Controllers
             var filePath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
 
             return Ok(filePath);
+        }
+
+        /// <summary>
+        /// Upsert File
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+
+        [HttpPut("UpsertFile")]
+        public async Task<IActionResult> UpsertFile(int companyId,
+            string fileKey, string fileGuid)
+        {
+
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            if (fileKey != null)
+            {
+                string newPath = string.Empty;
+                newPath = fileGuid;
+                var companyRecord = await context.Companies
+                        .Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+
+                fileKey = fileKey.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+                switch (fileKey)
+                {
+                    case "logo":
+                        companyRecord.LogoGuid = newPath;
+                        break;
+                    case "banner":
+                        companyRecord.ImageGuid = newPath;
+                        break;
+                    case "rut":
+                        companyRecord.RutDocGuid = newPath;
+                        break;
+                    case "exist":
+                        companyRecord.LegalExistenceDocGuid = newPath;
+                        break;
+                    case "bank":
+                        companyRecord.BankAccountDocGuid = newPath;
+                        break;
+
+                    default:
+
+                        return BadRequest("El archivo que deseas cambiar no existe");
+
+                }
+
+                context.Update(companyRecord);
+                await context.SaveChangesAsync();
+                return Ok("Se ha actualizado el archivo correctamente");
+            }
+            else
+            {
+                return BadRequest("Debe subir un archivo");
+            }
+        }
+
+        /// <summary>
+        /// Get File
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+        /// 
+        [HttpGet("GetFile")]
+        public async Task<IActionResult> GetFile(int companyId,
+            string fileKey)
+        {
+
+            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!exist)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            var companyRecord = await context.Companies
+                       .Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+
+            fileKey = fileKey.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+
+            var response = new FileDTO();
+
+            switch (fileKey)
+            {
+                case "logo":
+                   
+                    response.FilePath = almacenadorArchivos.GenerateSASTokenForFile(companyRecord.LogoGuid);
+                    response.FileName = companyRecord.LogoKey;
+                    break;
+                case "banner":
+                    response.FilePath = almacenadorArchivos.GenerateSASTokenForFile(companyRecord.ImageGuid);
+                    response.FileName = companyRecord.ImageKey;
+                    break;
+                case "rut":
+                    response.FilePath = almacenadorArchivos.GenerateSASTokenForFile(companyRecord.RutDocGuid);
+                    response.FileName = companyRecord.RutDocKey;
+                    break;
+                case "exist":
+                    response.FilePath = almacenadorArchivos.GenerateSASTokenForFile(companyRecord.LegalExistenceDocGuid);
+                    response.FileName = companyRecord.LegalExistenceDocKey;
+                    break;
+                case "bank":
+                    response.FilePath = almacenadorArchivos.GenerateSASTokenForFile(companyRecord.BankAccountDocGuid);
+                    response.FileName = companyRecord.BankAccountDocKey;
+                    break;
+
+                default:
+
+                    return BadRequest("El archivo que deseas cambiar no existe");
+
+            }
+
+            return Ok(response);
 
         }
 
+        /// <summary>
+        /// Get Address
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+        /// 
+
         [HttpGet("GetAddress")]
-        public async Task<ActionResult<AddressDTO>> GetAddress(int addressId)
+        public async Task<IActionResult> GetAddress(int addressId)
         {
             var exist = await context.Address.AnyAsync(x => x.AddressId == addressId);
             if (!exist)
@@ -51,14 +204,21 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("No existe esta dirección");
             }
 
-            var address = await context.Address
-                .Where(addressDB => addressDB.AddressId == addressId).FirstOrDefaultAsync();
+            var addressRecord = await context.Address.FirstOrDefaultAsync(x => x.AddressId == addressId);
 
-            return mapper.Map<AddressDTO>(address);
+            return Ok(mapper.Map<AddressDTO>(addressRecord));
+
 
         }
 
-        [HttpPost("CreateAddress")]
+            /// <summary>
+            /// Create Address
+            /// </summary>
+            /// <param name="companyCreationDTO"></param>
+            /// <returns></returns>
+            /// 
+
+            [HttpPost("CreateAddress")]
         public async Task<IActionResult> CreateAddress(AddressDTO newAddress)
         {          
             var address = new Address();
@@ -73,6 +233,22 @@ namespace SolicitudesAPI.Controllers
             context.Address.Add(address);
             context.SaveChanges();
             return Ok(address.AddressId);
+        }
+
+        /// <summary>
+        /// Get All Categories
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+        /// 
+        [HttpGet("GetAllCategories")]
+        public async Task<IActionResult> GetAllCategories()
+        {
+
+            var categoriesList = await context.Categories.ToListAsync();
+
+            return Ok(mapper.Map<List<CategoryDTO>>(categoriesList));
+
         }
 
     }

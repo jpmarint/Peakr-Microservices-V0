@@ -11,7 +11,7 @@ namespace SolicitudesAPI.Controllers
 {
 
     [ApiController]
-    [Route("api/quotes")]
+    [Route("api/quote")]
     public class QuoteController : ControllerBase
     {
         private readonly ApplicationDbContext context;
@@ -31,7 +31,7 @@ namespace SolicitudesAPI.Controllers
         /// 
 
        
-        [HttpGet("QuoteDetails", Name = "Request&QuoteReadSellerModal")]
+        [HttpGet("GetQuoteDetails", Name = "GetQuoteDetails")]
             public async Task<ActionResult<QuoteRequestDTO>> Get(int quoteId, int requestId)
         {
 
@@ -52,7 +52,7 @@ namespace SolicitudesAPI.Controllers
             }
 
 
-            var quoteRequest = await context.QuoteRequest.Include(request => request.Quote)
+            var quoteRequest = await context.QuoteRequests.Include(request => request.Quote)
                 .Include(quote => quote.Request)
                 .Where(q => q.QuoteId == quoteId && q.RequestId == requestId).FirstOrDefaultAsync();
 
@@ -73,21 +73,17 @@ namespace SolicitudesAPI.Controllers
         /// <param name="quoteCreationDTO"></param>
         /// <returns></returns>
        
-        [HttpPost("NewQuote", Name = "QuoteCreationModal")]
+        [HttpPost("CreateQuote", Name = "QuoteCreationModal")]
         public async Task<IActionResult> Post(QuoteCreationDTO quoteCreationDTO)
         {
             if (quoteCreationDTO.RequestId == null)
             {
                 return BadRequest("No se puede crear una cotizacion sin solicitud");
             }
-            var requestId = await context.Requests
-                .Where(requestDB => requestDB.RequestId == quoteCreationDTO.RequestId)
-                .Select(x => x.RequestId).ToListAsync();
-
             var quote = mapper.Map<Quote>(quoteCreationDTO);
             context.Add(quote);
             await context.SaveChangesAsync();
-            return Ok(quote);
+            return Ok();
         }
 
         /// <summary>
@@ -96,7 +92,7 @@ namespace SolicitudesAPI.Controllers
         /// <param name="requestId"></param>
         /// <returns></returns>
      
-        [HttpGet("requestNewQuote", Name = "GetRequestCreationQuote")]
+        [HttpGet("GetRequestCreateQuote", Name = "GetRequestCreationQuote")]
         public async Task<ActionResult<RequestModalDTO>> Get(int requestId)
         {
 

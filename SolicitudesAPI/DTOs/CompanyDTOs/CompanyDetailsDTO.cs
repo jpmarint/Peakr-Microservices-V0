@@ -14,5 +14,7 @@ namespace SolicitudesAPI.DTOs.CompanyDTOs
         public string WebSiteUrl { get; set; }
         public string TotalEmployees { get; set; }
         public string YearlySalesVolume { get; set; }
+        public bool CompanyType { get; set; }
+        public int? AddressId { get; set; }
     }
 }

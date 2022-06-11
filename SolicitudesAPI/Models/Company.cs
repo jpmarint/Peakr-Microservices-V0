@@ -17,8 +17,10 @@ namespace SolicitudesAPI.Models
         public int CompanyId { get; set; }
         [Required]
         public bool CompanyType { get; set; }
-        public string? ImagePath { get; set; } = "https://peakrweb.blob.core.windows.net/logos/BannerTemp.png";
-        public string? LogoPath { get; set; } = "https://peakrweb.blob.core.windows.net/logos/LogoTemp.png";
+        public string? ImageKey { get; set; } = "Banner";
+        public string? ImageGuid { get; set; } = "https://peakrweb.blob.core.windows.net/logos/BannerTemp.png";
+        public string? LogoKey { get; set; } = "Logo";
+        public string? LogoGuid { get; set; } = "https://peakrweb.blob.core.windows.net/logos/LogoTemp.png";
 
         [Required(ErrorMessage = "El nombre de la empresa es requerido")]
         public string? Name { get; set; }
@@ -35,15 +37,20 @@ namespace SolicitudesAPI.Models
         public string? YearlySalesVolume { get; set; }
 
         //Docs
-        public string? LegalExistenceDocPath { get; set; }
-        public string? BankAccountDocPath { get; set; }
-        public string? RutDocPath { get; set; }
+        public string? LegalExistenceDocGuid { get; set; }
+        public string LegalExistenceDocKey { get; set; } = "Cert_Existencia";
+        public string? BankAccountDocGuid { get; set; } 
+        public string? BankAccountDocKey { get; set; } = "Cert_Bancario";
+        public string? RutDocGuid { get; set; }
+        public string? RutDocKey { get; set; } = "RUT";
         public string? PeakrContractDocPath { get; set; }
+
+     
 
         //External
         [ForeignKey("Address")]
         public int? AddressId { get; set; }
-        public Address? Address { get; set; } = new Address();       
+        public Address Address { get; set; } = new Address();
         [NotMapped]
         public List<SelectListItem>? ProductCategories { get; set; }
         [NotMapped]
