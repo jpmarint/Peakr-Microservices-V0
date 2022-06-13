@@ -22,7 +22,6 @@ namespace SolicitudesAPI.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
-<<<<<<< HEAD
         /// <summary>
         /// Update Address
         /// </summary>
@@ -159,9 +158,6 @@ namespace SolicitudesAPI.Controllers
             }
         }
 
-=======
-        
->>>>>>> fdb31180b77b0beb70b4b27d65c5ba1a25f3f64e
         /// <summary>
         /// Get File
         /// </summary>
@@ -241,12 +237,6 @@ namespace SolicitudesAPI.Controllers
 
 
         }
-
-<<<<<<< HEAD
-      
-=======
-            
->>>>>>> fdb31180b77b0beb70b4b27d65c5ba1a25f3f64e
 
         /// <summary>
         /// Get All Categories
