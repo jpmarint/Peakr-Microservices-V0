@@ -18,6 +18,7 @@ namespace SolicitudesAPI.Models
         [Required]
         public int RequestId { get; set; }
 
+        public string statusRequest { get; set; } = "Por cotizar";
         [Required]
         public string QuerySearch { get; set; }
 
@@ -29,7 +30,9 @@ namespace SolicitudesAPI.Models
         public DateTime RequestDate { get; set; }
 
         [Required]
-        public Address? Address { get; set; } = new Address();
+        [ForeignKey("Address")]
+        public int AddressId { get; set; }
+        public Address? Address { get; set; } 
 
         [Required]
         public string PaymentConditions { get; set; }

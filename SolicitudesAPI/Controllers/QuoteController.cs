@@ -58,6 +58,27 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<QuoteRequestDTO>(quoteRequest);
         }
 
+
+
+        /// <summary>
+        /// Register a new Quote
+        /// </summary>
+        /// <param name="quoteCreationDTO"></param>
+        /// <returns></returns>
+       
+        [HttpPost("CreateQuote", Name = "QuoteCreationModal")]
+        public async Task<IActionResult> Post(QuoteCreationDTO quoteCreationDTO)
+        {
+            if (quoteCreationDTO.RequestId == null)
+            {
+                return BadRequest("No se puede crear una cotizacion sin solicitud");
+            }
+            var quote = mapper.Map<Quote>(quoteCreationDTO);
+            context.Add(quote);
+            await context.SaveChangesAsync();
+            return Ok(quote.QuoteId);
+        }
+
         /// <summary>
         /// Request information to create a new quote
         /// </summary>
@@ -86,24 +107,7 @@ namespace SolicitudesAPI.Controllers
             return mapper.Map<RequestModalDTO>(request);
         }
 
-        /// <summary>
-        /// Register a new Quote
-        /// </summary>
-        /// <param name="quoteCreationDTO"></param>
-        /// <returns></returns>
 
-        [HttpPost("CreateQuote", Name = "QuoteCreationModal")]
-        public async Task<IActionResult> Post(QuoteCreationDTO quoteCreationDTO)
-        {
-            if (quoteCreationDTO.RequestId == null)
-            {
-                return BadRequest("No se puede crear una cotizacion sin solicitud");
-            }
-            var quote = mapper.Map<Quote>(quoteCreationDTO);
-            context.Add(quote);
-            await context.SaveChangesAsync();
-            return Ok();
-        }
 
     }
 }
