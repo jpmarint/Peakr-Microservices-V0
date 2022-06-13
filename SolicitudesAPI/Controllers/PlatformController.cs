@@ -25,11 +25,12 @@ namespace SolicitudesAPI.Controllers
         /// <summary>
         /// Update Address
         /// </summary>
-        /// <param name="companyCreationDTO"></param>
+        /// <param name="addressId"></param>
+        /// /// <param name="addressDTO"></param>
         /// <returns></returns>
         /// 
-        [HttpPut("UpdateAddress")]
-        public async Task<IActionResult> UpdateCompanyAddress(int addressId, AddressDTO addressDTO)
+        [HttpPut("UpsertAddress")]
+        public async Task<IActionResult> UpsertAddress(int addressId, AddressDTO addressDTO)
         {
             var exist = await context.Address.AnyAsync(x => x.AddressId == addressId);
             if (!exist)
@@ -52,24 +53,23 @@ namespace SolicitudesAPI.Controllers
             return Ok("Se actualizó la dirección");
         }
 
+        ///// <summary>
+        ///// Upload File
+        ///// </summary>
+        ///// <param name="companyId"></param>
+        ///// /// <param name="file"></param>
+        ///// <returns></returns>
+        
+        //[HttpPost("UploadFile")]
+        //public async Task<IActionResult> UploadFile(IFormFile file, int companyId)
+        //{
+        //    var companyName = await context.Companies
+        //                .Where(companyDB => companyDB.CompanyId == companyId)
+        //               .Select(x => x.Name).FirstOrDefaultAsync();
+        //    var filePath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
 
-        /// <summary>
-        /// Upload File
-        /// </summary>
-        /// <param name="companyId"></param>
-        /// /// <param name="file"></param>
-        /// <returns></returns>
-
-        [HttpPost("UploadFile")]
-        public async Task<IActionResult> UploadFile(IFormFile file, int companyId)
-        {
-            var companyName = await context.Companies
-                        .Where(companyDB => companyDB.CompanyId == companyId)
-                       .Select(x => x.Name).FirstOrDefaultAsync();
-            var filePath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
-
-            return Ok(filePath);
-        }
+        //    return Ok(filePath);
+        //}
 
         /// <summary>
         /// Upsert File
@@ -79,14 +79,22 @@ namespace SolicitudesAPI.Controllers
 
         [HttpPut("UpsertFile")]
         public async Task<IActionResult> UpsertFile(int companyId,
-            string fileKey, string fileGuid)
+            string fileKey, int requestId, int quoteId, IFormFile file)
         {
-
-            var exist = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
-            if (!exist)
+            //sube el archivo al storage de aqui debo tomar el filepath
+            var companyName = await context.Companies
+                        .Where(companyDB => companyDB.CompanyId == companyId)
+                       .Select(x => x.Name).FirstOrDefaultAsync();
+            var fileGuid = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+            
+            //verificar existencia
+            var existcompany = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!existcompany)
             {
                 return NotFound("No existe esta compañía");
             }
+
+            //actualiza la base de datos con el filepath
 
             if (fileKey != null)
             {
@@ -94,6 +102,10 @@ namespace SolicitudesAPI.Controllers
                 newPath = fileGuid;
                 var companyRecord = await context.Companies
                         .Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+                var requestRecord = await context.Requests
+                       .Where(x => x.RequestId == requestId).FirstOrDefaultAsync();
+                var quoteRecord = await context.Quotes
+                       .Where(x => x.QuoteId == quoteId).FirstOrDefaultAsync();
 
                 fileKey = fileKey.Trim().Replace(" ", String.Empty).ToLowerInvariant();
                 switch (fileKey)
@@ -112,6 +124,22 @@ namespace SolicitudesAPI.Controllers
                         break;
                     case "bank":
                         companyRecord.BankAccountDocGuid = newPath;
+                        break;
+                    case "request":
+                        var existrequest = await context.Requests.AnyAsync(x => x.RequestId == requestId);
+                        if (!existrequest)
+                        {
+                            return NotFound("No existe esta solicitud");
+                        }
+                        requestRecord.FileGuid = newPath;
+                        break;
+                    case "quote":
+                        var existquote = await context.Quotes.AnyAsync(x => x.QuoteId == quoteId);
+                        if (!existquote)
+                        {
+                            return NotFound("No existe esta cotización");
+                        }
+                        quoteRecord.FileGuid = newPath;
                         break;
 
                     default:
@@ -157,7 +185,6 @@ namespace SolicitudesAPI.Controllers
             switch (fileKey)
             {
                 case "logo":
-                   
                     response.FilePath = almacenadorArchivos.GenerateSASTokenForFile(companyRecord.LogoGuid);
                     response.FileName = companyRecord.LogoKey;
                     break;
@@ -211,29 +238,7 @@ namespace SolicitudesAPI.Controllers
 
         }
 
-            /// <summary>
-            /// Create Address
-            /// </summary>
-            /// <param name="companyCreationDTO"></param>
-            /// <returns></returns>
-            /// 
-
-            [HttpPost("CreateAddress")]
-        public async Task<IActionResult> CreateAddress(AddressDTO newAddress)
-        {          
-            var address = new Address();
-
-            address.Line1 = newAddress.Line1;
-            address.Line2 = newAddress.Line2;
-            address.PostalCode = newAddress.PostalCode;
-            address.Department = newAddress.Department;
-            address.City = newAddress.City;
-            address.Notes = newAddress.Notes;
-
-            context.Address.Add(address);
-            context.SaveChanges();
-            return Ok(address.AddressId);
-        }
+      
 
         /// <summary>
         /// Get All Categories

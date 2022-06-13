@@ -37,7 +37,7 @@ namespace SolicitudesAPI.Models
         public string? YearlySalesVolume { get; set; }
 
         //Docs
-        public string? LegalExistenceDocGuid { get; set; }
+        public string? LegalExistenceDocGuid { get; set; } 
         public string LegalExistenceDocKey { get; set; } = "Cert_Existencia";
         public string? BankAccountDocGuid { get; set; } 
         public string? BankAccountDocKey { get; set; } = "Cert_Bancario";

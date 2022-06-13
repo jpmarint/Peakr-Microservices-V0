@@ -83,7 +83,7 @@ namespace SolicitudesAPI.Controllers
             var quote = mapper.Map<Quote>(quoteCreationDTO);
             context.Add(quote);
             await context.SaveChangesAsync();
-            return Ok(quote.QuoteId);
+            return Ok(quote.QuoteId);   
         }
 
         /// <summary>

@@ -32,7 +32,7 @@ namespace SolicitudesAPI.Models
         [Required]
         [ForeignKey("Address")]
         public int AddressId { get; set; }
-        public Address? Address { get; set; } 
+        public Address? Address { get; set; } = new Address();
 
         [Required]
         public string PaymentConditions { get; set; }
