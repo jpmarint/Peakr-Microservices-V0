@@ -52,7 +52,7 @@ namespace SolicitudesAPI.Controllers
         /// <param name="requestCreationDTO"></param>
         /// <returns></returns>
 
-        [HttpPost("CreateRequest",Name = "CreateRequest")]
+        [HttpPost("CreateRequest", Name = "CreateRequest")]
         public async Task<IActionResult> Post(RequestCreationDTO requestCreationDTO)
         {
 
