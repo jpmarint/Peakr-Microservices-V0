@@ -36,11 +36,11 @@ namespace SolicitudesAPI
                 var archivoXML = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var rutaXML = Path.Combine(AppContext.BaseDirectory, archivoXML);
                 c.IncludeXmlComments(rutaXML);
+                c.SwaggerDoc("V1", new OpenApiInfo { 
+                    Title = "Peakr API", Version = "V1", 
+                    Description = "This is an API, created for the purpose of allowing the user to register in the system, create requests"
+                });
             });
-           
-
-
-          
                 //Add a bunch of service configurations here
                 // ...
 
@@ -103,7 +103,12 @@ namespace SolicitudesAPI
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/V1/swagger.json", "Peakr API");
+                c.DefaultModelsExpandDepth(-1);
+            }
+                );
             app.UseHttpsRedirection();
            
             app.UseRouting();

@@ -22,7 +22,146 @@ namespace SolicitudesAPI.Controllers
             this.almacenadorArchivos = almacenadorArchivos;
         }
 
+<<<<<<< HEAD
+        /// <summary>
+        /// Update Address
+        /// </summary>
+        /// <param name="addressId"></param>
+        /// /// <param name="addressDTO"></param>
+        /// <returns></returns>
+        /// 
+        [HttpPut("UpsertAddress")]
+        public async Task<IActionResult> UpsertAddress(int addressId, AddressDTO addressDTO)
+        {
+            var exist = await context.Address.AnyAsync(x => x.AddressId == addressId);
+            if (!exist)
+            {
+                return NotFound("No existe esta dirección");
+            }
+
+            var addressRecord = await context.Address.FirstOrDefaultAsync(x => x.AddressId == addressId);
+
+            addressRecord.Line1 = addressDTO.Line1;
+            addressRecord.Line2 = addressDTO.Line2;
+            addressRecord.PostalCode = addressDTO.PostalCode;
+            addressRecord.Department = addressDTO.Department;
+            addressRecord.City = addressDTO.City;
+            addressRecord.Notes = addressDTO.Notes;
+
+            context.Update(addressRecord);
+            await context.SaveChangesAsync();
+
+            return Ok("Se actualizó la dirección");
+        }
+
+        ///// <summary>
+        ///// Upload File
+        ///// </summary>
+        ///// <param name="companyId"></param>
+        ///// /// <param name="file"></param>
+        ///// <returns></returns>
         
+        //[HttpPost("UploadFile")]
+        //public async Task<IActionResult> UploadFile(IFormFile file, int companyId)
+        //{
+        //    var companyName = await context.Companies
+        //                .Where(companyDB => companyDB.CompanyId == companyId)
+        //               .Select(x => x.Name).FirstOrDefaultAsync();
+        //    var filePath = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+
+        //    return Ok(filePath);
+        //}
+
+        /// <summary>
+        /// Upsert File
+        /// </summary>
+        /// <param name="companyCreationDTO"></param>
+        /// <returns></returns>
+
+        [HttpPut("UpsertFile")]
+        public async Task<IActionResult> UpsertFile(int companyId,
+            string fileKey, int requestId, int quoteId, IFormFile file)
+        {
+            //sube el archivo al storage de aqui debo tomar el filepath
+            var companyName = await context.Companies
+                        .Where(companyDB => companyDB.CompanyId == companyId)
+                       .Select(x => x.Name).FirstOrDefaultAsync();
+            var fileGuid = await almacenadorArchivos.UploadFileToBlob(companyName, file);
+            
+            //verificar existencia
+            var existcompany = await context.Companies.AnyAsync(x => x.CompanyId == companyId);
+            if (!existcompany)
+            {
+                return NotFound("No existe esta compañía");
+            }
+
+            //actualiza la base de datos con el filepath
+
+            if (fileKey != null)
+            {
+                string newPath = string.Empty;
+                newPath = fileGuid;
+                var companyRecord = await context.Companies
+                        .Where(x => x.CompanyId == companyId).FirstOrDefaultAsync();
+                var requestRecord = await context.Requests
+                       .Where(x => x.RequestId == requestId).FirstOrDefaultAsync();
+                var quoteRecord = await context.Quotes
+                       .Where(x => x.QuoteId == quoteId).FirstOrDefaultAsync();
+
+                fileKey = fileKey.Trim().Replace(" ", String.Empty).ToLowerInvariant();
+                switch (fileKey)
+                {
+                    case "logo":
+                        companyRecord.LogoGuid = newPath;
+                        break;
+                    case "banner":
+                        companyRecord.ImageGuid = newPath;
+                        break;
+                    case "rut":
+                        companyRecord.RutDocGuid = newPath;
+                        break;
+                    case "exist":
+                        companyRecord.LegalExistenceDocGuid = newPath;
+                        break;
+                    case "bank":
+                        companyRecord.BankAccountDocGuid = newPath;
+                        break;
+                    case "request":
+                        var existrequest = await context.Requests.AnyAsync(x => x.RequestId == requestId);
+                        if (!existrequest)
+                        {
+                            return NotFound("No existe esta solicitud");
+                        }
+                        requestRecord.FileGuid = newPath;
+                        break;
+                    case "quote":
+                        var existquote = await context.Quotes.AnyAsync(x => x.QuoteId == quoteId);
+                        if (!existquote)
+                        {
+                            return NotFound("No existe esta cotización");
+                        }
+                        quoteRecord.FileGuid = newPath;
+                        break;
+
+                    default:
+
+                        return BadRequest("El archivo que deseas cambiar no existe");
+
+                }
+
+                context.Update(companyRecord);
+                await context.SaveChangesAsync();
+                return Ok("Se ha actualizado el archivo correctamente");
+            }
+            else
+            {
+                return BadRequest("Debe subir un archivo");
+            }
+        }
+
+=======
+        
+>>>>>>> fdb31180b77b0beb70b4b27d65c5ba1a25f3f64e
         /// <summary>
         /// Get File
         /// </summary>
@@ -50,7 +189,6 @@ namespace SolicitudesAPI.Controllers
             switch (fileKey)
             {
                 case "logo":
-                   
                     response.FilePath = almacenadorArchivos.GenerateSASTokenForFile(companyRecord.LogoGuid);
                     response.FileName = companyRecord.LogoKey;
                     break;
@@ -104,7 +242,11 @@ namespace SolicitudesAPI.Controllers
 
         }
 
+<<<<<<< HEAD
+      
+=======
             
+>>>>>>> fdb31180b77b0beb70b4b27d65c5ba1a25f3f64e
 
         /// <summary>
         /// Get All Categories

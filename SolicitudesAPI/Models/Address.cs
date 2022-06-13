@@ -2,9 +2,15 @@
 
 namespace SolicitudesAPI.Models
 {
+    /// <summary>
+    /// Permite registrar las categorías de los productos
+    /// que vende la empresa
+    /// </summary>
     public class Address
     {
-
+        /// <summary>
+        /// hola
+        /// </summary>
         [Required]
         [Key]
         public int AddressId { get; set; }
