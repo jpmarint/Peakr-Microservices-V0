@@ -26,26 +26,19 @@ namespace SolicitudesAPI.Utilidades
             //Requests
             
             CreateMap<Request, RequestModalDTO>()
-                .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
-                .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department))
-                .ForMember(x => x.Line2, x => x.MapFrom(y => y.Address.Line2))
-                .ForMember(x => x.PostalCode, x => x.MapFrom(y => y.Address.PostalCode))
                 .ForMember(x => x.Name, x => x.MapFrom(y => y.Company.Name))
                 .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Company.LogoKey));
 
             CreateMap<RequestCreationDTO, Request>()
                 .ForMember(request => request.Categories, opciones => opciones.MapFrom(MapRequestCategory));
-            CreateMap<Request, RequestSellerDTO>()
+            CreateMap<Request, RequestDTO>()
                .ForMember(x => x.CompanyName, x => x.MapFrom(y => y.Company.Name))
                .ForMember(x => x.LogoPath, x => x.MapFrom(y => y.Company.LogoKey))
                .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Company.WebSiteUrl));
 
-            CreateMap<Request, RequestBuyerDTO>().ReverseMap();
-
-            CreateMap<Request, RequestDetailSellerDTO>()
-                .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
-                .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department))
-                .ForMember(requestDetailDTO => requestDetailDTO.Quotes, opciones => opciones.MapFrom(MapRequestQuotesList));
+            CreateMap<Request, RequestDetailDTO>()
+            .ForMember(x => x.City, x => x.MapFrom(y => y.Address.City))
+            .ForMember(x => x.Department, x => x.MapFrom(y => y.Address.Department));
 
             //company
 
@@ -58,11 +51,15 @@ namespace SolicitudesAPI.Utilidades
                 .ForMember(x => x.BankAccountDocGuid, options => options.Ignore())
                 .ForMember(x => x.RutDocGuid, options => options.Ignore());
 
-
             //Quotes
 
+            CreateMap<QuoteDTO, Quote>();
+
+            CreateMap<Quote, QuoteDTO>()
+                .ForMember(x => x.Name, x => x.MapFrom(y => y.Company.Name))
+                .ForMember(x => x.WebSiteUrl, x => x.MapFrom(y => y.Company.WebSiteUrl));
+
             CreateMap<Quote, QuoteReadOnlyDTO>().ReverseMap();
-            CreateMap<Quote, QuoteSellerDTO>().ReverseMap();
 
             CreateMap<QuoteRequest, QuoteRequestDTO>().ReverseMap();
 
@@ -95,13 +92,13 @@ namespace SolicitudesAPI.Utilidades
 
 
 
-        private List<QuoteSellerDTO> MapRequestQuotesList(Request request, RequestDetailSellerDTO requestDetailDTO)
+        private List<QuoteDTO> MapRequestQuotesList(Request request, RequestDetailDTO requestDetailDTO)
         {
-            var res = new List<QuoteSellerDTO>();
+            var res = new List<QuoteDTO>();
             if (request.Quotes == null) { return res; }
             foreach (var requestQuote in request.Quotes)
             {
-                res.Add(new QuoteSellerDTO()
+                res.Add(new QuoteDTO()
                 {
                     QuoteId = requestQuote.QuoteId,
                     QuoteProductName = requestQuote.QuoteProductName,

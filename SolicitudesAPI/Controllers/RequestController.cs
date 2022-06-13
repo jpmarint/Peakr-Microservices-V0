@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SolicitudesAPI.DTOs;
+using SolicitudesAPI.DTOs.QuoteDTOs;
 using SolicitudesAPI.DTOs.RequestDTOs;
 using SolicitudesAPI.Models;
 using SolicitudesAPI.Servicios;
@@ -72,7 +73,7 @@ namespace SolicitudesAPI.Controllers
             var request = mapper.Map<Request>(requestCreationDTO);
             context.Add(request);
             await context.SaveChangesAsync();
-            return Ok(request);
+            return Ok(request.RequestId);
         }
 
         /// <summary>
@@ -91,33 +92,46 @@ namespace SolicitudesAPI.Controllers
                 return NotFound("No existe esa solicitud");
             }
 
+            var requestSeller = await context.Requests.Include(requestDB => requestDB.Quotes)
+                .Include(requestDB => requestDB.Address).Include(requestDB => requestDB.Company)
+                .FirstOrDefaultAsync(x => x.RequestId == requestId);
+
+
             var company = await context.Requests
                 .Include(requestDB => requestDB.Company).Select(y => y.CompanyId).FirstOrDefaultAsync();
+
+            var requestResult = mapper.Map<RequestDetailDTO>(requestSeller);
 
             if (context.Companies.Where(x => x.CompanyId == company)
                .Select(x => x.CompanyType).FirstOrDefault())
             {
+                requestResult.Quotes.ForEach(x =>{
 
-                var requestSeller = await context.Requests.Include(requestDB => requestDB.Quotes)
-                    .FirstOrDefaultAsync(x => x.RequestId == requestId);
+                    x.LogoPath = null;
+                    x.Name = null;
+                    x.WebSiteUrl = null;
+
+
+                });
 
                 context.Entry(requestSeller).Reference(x => x.Address).Load();
-
-
-                return Ok(mapper.Map<RequestDetailSellerDTO>(requestSeller));
             }
             else
             {
-                var requestBuyer = await context.Requests.Include(requestDB => requestDB.Quotes)
-                .FirstOrDefaultAsync(x => x.RequestId == requestId);
 
-                context.Entry(requestBuyer).Reference(x => x.Address).Load();
+                var QuoteResponse = new QuoteDTO();
 
+                requestResult.Quotes.ForEach(x => {
 
-                return Ok(mapper.Map<RequestDetailBuyerDTO>(requestBuyer));
+                    x.LogoPath = almacenadorArchivos.GenerateSASTokenForFile(x.LogoPath);
+                });
+
+                context.Entry(requestSeller).Reference(x => x.Address).Load();
+                context.Entry(requestSeller).Reference(x => x.Company).Load();
             }
 
-            
+            return Ok(requestResult);
+
         }
 
         /// <summary>
@@ -141,24 +155,29 @@ namespace SolicitudesAPI.Controllers
                 .Select(x => x.CompanyType).FirstOrDefault())
             {
 
-                var request = await context.Requests.ToListAsync();
+                var request = await context.Requests.Include(requestDB => requestDB.Company).ToListAsync();
+                var result = mapper.Map<List<RequestDTO>>(request);
 
-                return Ok(mapper.Map<List<RequestSellerDTO>>(request));
+                return Ok(result);
             }
             else
             {
                 var requests = await context.Requests.Include(x => x.Company)
                .Where(requestDB => requestDB.CompanyId == companyId).ToListAsync();
 
-                var result = mapper.Map<List<RequestBuyerDTO>>(requests);
+                var result = mapper.Map<List<RequestDTO>>(requests);
 
                 int qty = 0;
 
                 foreach (var req in result)
                 {
+                    req.CompanyName = null;
+                    req.LogoPath = null;
+                    req.WebSiteUrl = null;
                     qty = await context.QuoteRequests.Where(x => x.RequestId == req.RequestId).CountAsync();
                     req.QuotesQty = qty;
                     qty = 0;
+                    
                 }
 
                 return Ok(result);
